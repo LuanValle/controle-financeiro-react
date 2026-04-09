@@ -1,5 +1,6 @@
   import { use, useState } from 'react'
-  import { useEffect } from 'react';
+  import { useEffect } from 'react'
+  import PainelReserva from './components/PainelReserva'
   import './App.css'
 
   function App() {
@@ -29,7 +30,7 @@
     const [novoTipo, setNovoTipo] = useState('entrada');//ja começa com 'entrada' para vir como padrao essa opçao.
     const [filtro, setFiltro] = useState('todos')//filtro para mostrar todas as transaçoes, ou somente as de entrada ou somente as de saida
     const [valorInputReserva, setValorInputReserva] = useState('') //controla o que esta sendo digitado no campo da reserva.
-    const [telaAtual, setTelaAtual] = useState('controle')//variavel para controlar qual tela esta sendo exibida, se a tela de controle ou a tela de relatorios
+    const [telaAtual, setTelaAtual] = useState('principal')//variavel para controlar qual tela esta sendo exibida, se a tela de controle ou a tela de relatorios
     
 
     //calcular o saldo total
@@ -149,78 +150,98 @@
       <div className="App">
         <h1>Meu Controle Financeiro</h1>
 
+        {/*Menu de Navegação*/}
+        <div style={{display:'flex', gap:'10px', marginBottom:'20px', justifyContent:'center'}}>
+          <button
+            className={telaAtual === 'principal' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'}
+            onClick={() => setTelaAtual('principal')}
+          >
+            Dia a Dia
+          </button>
+
+          <button
+            className={telaAtual === 'reserva' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'}
+            onClick={() => setTelaAtual('reserva')}
+          >
+            Reserva de Emergência
+          </button>
+
+        </div>
+
         <h2 style={{color: corSaldo}}>Saldo Total: {formatarDinheiro(resultadoSaldo)}</h2>
 
-        <div style={{backgroundColor: '#eff6ff', padding:'20px', borderRadius:'8px', marginBottom:'30px', border:'1px solid #bfdbfe'}}>
-          <h3 style={{color: '#3b82f6'}}>
-          Reserva de Emergência: {formatarDinheiro(reserva)}
-          </h3>
-          <input type="number"
-          placeholder='Valor da reserva'
-          className='campo-entrada'
-          value={valorInputReserva}
-          onChange={(evento)=> setValorInputReserva(evento.target.value)}
+        {/*Tela da Reserva de Emergência*/}
+        {telaAtual === 'reserva' && (
+          <PainelReserva
+            reserva={reserva}
+            formatarDinheiro={formatarDinheiro}
+            valorInputReserva={valorInputReserva}
+            setValorInputReserva={setValorInputReserva}
+            guardarReserva={guardarReserva}
+            resgatarReserva={resgatarReserva}
           />
-          <button className='btn-adicionar' onClick={guardarReserva}>Guardar</button>
-          <button className='btn-adicionar' onClick={resgatarReserva}>Resgatar</button>
-
-        </div>
-
-
-
-        <h3>Adicionar Transação</h3>
-        <div className="painel-formulario">
-
-        <input type="text" 
-        placeholder='Descrição'
-        className='campo-entrada'
-        value={novaDescricao}
-        onChange={(evento) => setNovaDescricao(evento.target.value)
-        }/>
-
-        <input type="number" 
-        placeholder='valor'
-        className='campo-entrada'
-        value={novoValor}
-        onChange={(evento) => setNovoValor(evento.target.value)} />
-
-        <select name="tipo" id="tipo" className='campo-entrada' value={novoTipo} onChange={(evento)=> setNovoTipo(evento.target.value)} >
-          <option value="entrada">Entrada</option>
-          <option value="saida">Saída</option>
-        </select>
-
-        <button className='btn-adicionar' onClick={adicionarTransacao}>Adicionar</button>
-        </div>
-
-        {/* Filtro de transações */}
-        <div className='painel-filtros'>
-          <button 
-          className={filtro === 'todos' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('todos')}>Todos</button>
-          <button className={filtro === 'entrada' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('entrada')}>Entradas</button>
-          <button className={filtro === 'saida' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('saida')}>Saídas</button>
-        </div>
-
-        {/* Lista de transações */}
-        {transacoes.length === 0 && (
-          <div style={{textAlign: 'center', color: '#6b7280', marginTop: '20px' }}>
-            <p>Nenhuma transação encontrada.</p>
-          </div>
         )}
 
-        {/* O map percorre a lista de transaçoes e para cada transaçao ele cria um item de lista (li) com a descricao, valor e tipo da transaçao */}
-        <ul className='lista-transacoes'>
-          {transacoesFiltradas.map(transacao => (
-            <li key={transacao.id} className='cartao-transacao'
-            style={{
-              backgroundColor: transacao.tipo === 'entrada' ? '#dcfce7' : '#fee2e2'
-            }}>
-              {transacao.descricao}: {formatarDinheiro(transacao.valor)} 
-              <button className='btn-excluir' onClick={()=>excluirTransacao(transacao.id)} >x</button>
-            </li>
-          ))}
-        </ul>
-        
+        {/*Tela do Controle Financeiro*/}
+        {telaAtual === 'principal' && (
+        <div>
+          <h3>Adicionar Transação</h3>
+          <div className="painel-formulario">
+
+          <input type="text" 
+          placeholder='Descrição'
+          className='campo-entrada'
+          value={novaDescricao}
+          onChange={(evento) => setNovaDescricao(evento.target.value)
+          }/>
+
+          <input type="number" 
+          placeholder='valor'
+          className='campo-entrada'
+          value={novoValor}
+          onChange={(evento) => setNovoValor(evento.target.value)} />
+
+          <select name="tipo" id="tipo" className='campo-entrada' value={novoTipo} onChange={(evento)=> setNovoTipo(evento.target.value)} >
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+          </select>
+
+          <button className='btn-adicionar' onClick={adicionarTransacao}>Adicionar</button>
+          </div>
+
+          {/* Filtro de transações */}
+          <div className='painel-filtros'>
+            <button 
+            className={filtro === 'todos' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('todos')}>Todos</button>
+            <button className={filtro === 'entrada' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('entrada')}>Entradas</button>
+            <button className={filtro === 'saida' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('saida')}>Saídas</button>
+          </div>
+
+          {/* Lista de transações */}
+          {transacoes.length === 0 && (
+            <div style={{textAlign: 'center', color: '#6b7280', marginTop: '20px' }}>
+              <p>Nenhuma transação encontrada.</p>
+            </div>
+          )}
+
+          {/* O map percorre a lista de transaçoes e para cada transaçao ele cria um item de lista (li) com a descricao, valor e tipo da transaçao */}
+          <ul className='lista-transacoes'>
+            {transacoesFiltradas.map(transacao => (
+              <li key={transacao.id} className='cartao-transacao'
+              style={{
+                backgroundColor: transacao.tipo === 'entrada' ? '#dcfce7' : '#fee2e2'
+              }}>
+                {transacao.descricao}: {formatarDinheiro(transacao.valor)} 
+                <button className='btn-excluir' onClick={()=>excluirTransacao(transacao.id)} >x</button>
+              </li>
+            ))}
+          </ul>
+          
+        </div>
+        )}
+      {/* Fim da Tela do Controle Financeiro */}
       </div>
+      
     );
   }
 
