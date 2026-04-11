@@ -2,19 +2,13 @@ import { use, useState } from 'react'
 import { useEffect } from 'react'
 import PainelReserva from './components/PainelReserva'
 import PainelPrincipal from './components/PainelPrincipal'
+import { db } from './firebase'
+import { collection, addDoc, onSnapshot, query, doc, deleteDoc} from 'firebase/firestore'
 import './App.css'
 
 function App() {
   //useStats
-  const [transacoes, setTransacoes] = useState(() => {
-    const dinheiroNoCofre = localStorage.getItem('transacoes') //pega as transaçoes salvas no localstorage, se tiver alguma coisa salva, ele retorna a string, se nao tiver nada, ele retorna null
-    if (dinheiroNoCofre) {//verifica se tem coisas salvas no localstorage
-      return JSON.parse(dinheiroNoCofre) //converte a string de volta para um array de objetos
-    }
-    else {
-      return [] //se nao tiver nada salvo, retorna um array vazio
-    }
-  })
+  const [transacoes, setTransacoes] = useState([])
 
   const [reserva, setReserva] = useState(() => { //criando a conta de reserva de emergencia.
     const reservaGuardada = localStorage.getItem('reserva_emergencia')//tentar pegar o que esta salvo no navegador com o nome 'reserva_emergencia'
@@ -56,7 +50,7 @@ function App() {
   })
 
   //funçao para adicionar valores
-  function adicionarTransacao() {
+  async function adicionarTransacao() {
     const novaTransacao = { //caixa da nova transaçao
       id: Date.now(), //gera um id unico baseado no tempo atual
       descricao: novaDescricao,
@@ -64,7 +58,9 @@ function App() {
       tipo: novoTipo
     }
 
-    setTransacoes([...transacoes, novaTransacao]) //adiciona a nova transaçao a lista de transaçoes
+    //adiciona a nova transaçao no banco de dados do firebase
+    await addDoc(collection(db, 'transacoes'), novaTransacao);
+
     setNovaDescricao('') //limpa o campo de descricao
     setNovoValor('') //limpa o campo de valor
     setNovoTipo('entrada') //reseta o tipo para 'entrada'
@@ -74,11 +70,29 @@ function App() {
   }
 
   //funçao para excluir transaçoes
-  function excluirTransacao(idClicado) {
-    setTransacoes(transacoes.filter((transacao) => {
-      return transacao.id !== idClicado
-    }))
+  async function excluirTransacao(idFirebase) {
+
+    //localiza o documento no cofre usando o ID
+    const documentoParaDeletar = doc(db, 'transacoes', idFirebase)
+
+    //manda o google excluir ele.
+    await deleteDoc(documentoParaDeletar)
   }
+
+  //effect para pegar as transaçoes do banco de dados do firebase em tempo real, toda vez que tiver uma nova transaçao adicionada, ele atualiza a lista de transaçoes automaticamente
+  useEffect(() => {
+    const q = query(collection(db, 'transacoes')) //cria uma consulta para pegar a coleção de transaçoes do banco de dados
+
+    //ligando o ouvinte
+    const desinscrever = onSnapshot(q, (snapshot) => {
+      const dadosDaNuvem = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id //pega o id do documento do firebase e adiciona na transaçao para poder excluir depois
+      }));
+      setTransacoes(dadosDaNuvem) //atualiza a lista de transaçoes com os dados do banco de dados toda vez que tiver uma mudança (adicionar ou excluir transaçao)
+    });
+    return () => desinscrever()//botao off
+  }, []); //*IMPORTANTE* esse cara diz para ligar o radio apenas uma vez.
 
   //funçao para guardar na reserva de emergencia, toda vez que o valor da reserva mudar, ele salva o novo valor no localstorage
   function guardarReserva() {
@@ -127,11 +141,6 @@ function App() {
       setValorInputReserva('') //limpa o campo de entrada da reserva caso o valor seja inválido
     }
   }
-
-  //salvar dados no localstorage
-  useEffect(() => {
-    localStorage.setItem('transacoes', JSON.stringify(transacoes))//salva as transaçoes no localstorage como string
-  }, [transacoes])//o useEffect é executado toda vez que a lista de transaçoes muda
 
   //sentinela da reserva de emergencia. Toda vez que a reserva mudar, ele salva o novo valor no localstorage
   useEffect(() => {
