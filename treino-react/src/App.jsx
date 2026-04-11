@@ -1,187 +1,218 @@
-import { use, useState } from 'react'
-import { useEffect } from 'react'
-import PainelReserva from './components/PainelReserva'
-import PainelPrincipal from './components/PainelPrincipal'
-import { db } from './firebase'
-import { collection, addDoc, onSnapshot, query, doc, deleteDoc} from 'firebase/firestore'
-import './App.css'
+import { useState, useEffect } from "react";
+import PainelReserva from "./components/PainelReserva";
+import PainelPrincipal from "./components/PainelPrincipal";
+import "./App.css";
+import {
+  salvarTransacao,
+  removerTransacao,
+  buscarTransacoes,
+} from "./services/transacaoService";
+
+const CORES = {
+  sucesso: "#22c55e",
+  erro: "#ef4444",
+};
+
+//funçao para transformar numeros puro em Reais(R$)
+function formatarDinheiro(valor) {
+  return Number(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
 
 function App() {
   //useStats
-  const [transacoes, setTransacoes] = useState([])
+  const [transacoes, setTransacoes] = useState([]);
 
-  const [reserva, setReserva] = useState(() => { //criando a conta de reserva de emergencia.
-    const reservaGuardada = localStorage.getItem('reserva_emergencia')//tentar pegar o que esta salvo no navegador com o nome 'reserva_emergencia'
+  const [reserva, setReserva] = useState(() => {
+    //criando a conta de reserva de emergencia.
+    const reservaGuardada = localStorage.getItem("reserva_emergencia"); //tentar pegar o que esta salvo no navegador com o nome 'reserva_emergencia'
     if (reservaGuardada) {
-      return Number(reservaGuardada) //se tiver algo salvo, converte para numero e retorna o valor
+      return Number(reservaGuardada); //se tiver algo salvo, converte para numero e retorna o valor
+    } else {
+      return 0; //se nao tiver nada salvo, retorna zero como valor inicial da reserva
     }
-    else {
-      return 0 //se nao tiver nada salvo, retorna zero como valor inicial da reserva
-    }
-  })
+  });
 
-  const [novaDescricao, setNovaDescricao] = useState('');
-  const [novoValor, setNovoValor] = useState('');
-  const [novoTipo, setNovoTipo] = useState('entrada');//ja começa com 'entrada' para vir como padrao essa opçao.
-  const [filtro, setFiltro] = useState('todos')//filtro para mostrar todas as transaçoes, ou somente as de entrada ou somente as de saida
-  const [valorInputReserva, setValorInputReserva] = useState('') //controla o que esta sendo digitado no campo da reserva.
-  const [telaAtual, setTelaAtual] = useState('principal')//variavel para controlar qual tela esta sendo exibida, se a tela de controle ou a tela de relatorios
-
+  const [novaDescricao, setNovaDescricao] = useState("");
+  const [novoValor, setNovoValor] = useState("");
+  const [novoTipo, setNovoTipo] = useState("entrada"); //ja começa com 'entrada' para vir como padrao essa opçao.
+  const [filtro, setFiltro] = useState("todos"); //filtro para mostrar todas as transaçoes, ou somente as de entrada ou somente as de saida
+  const [valorInputReserva, setValorInputReserva] = useState(""); //controla o que esta sendo digitado no campo da reserva.
+  const [telaAtual, setTelaAtual] = useState("principal"); //variavel para controlar qual tela esta sendo exibida, se a tela de controle ou a tela de relatorios
+  const [carregando, setCarregando] = useState(false); //mostrar tela de loading na tela enquanto nao carregou os dados.
 
   //calcular o saldo total
-  const resultadoSaldo = transacoes.reduce((acc, transacao) => {
-    if (transacao.tipo === 'entrada') {
-      return acc + transacao.valor
-    } else {
-      return acc - transacao.valor
-    }
-  }, 0)// serve para dizer que o reduce deve começar em zero, se nao ele da erro.
+  const resultadoSaldo = transacoes.reduce(
+    (acc, transacao) =>
+      transacao.tipo === "entrada"
+        ? acc + transacao.valor
+        : acc - transacao.valor,
+    0,
+  );
+  //se for entrada, soma o valor, se for saida, subtrai o valor, o zero é o valor inicial do acumulador
 
   //cor inteligente para o resultado do saldo, for + verde, for - vermelho
-  const corSaldo = resultadoSaldo >= 0 ? '#22c55e' : '#ef4444'
+  const corSaldo = resultadoSaldo >= 0 ? CORES.sucesso : CORES.erro;
 
   //filtro para mostrar somente as transaçoes de entrada, ou somente as de saida, ou todas as transaçoes
-  const transacoesFiltradas = transacoes.filter(transacao => {
-    if (filtro === 'todos') {
-      return true //mostra todas as transaçoes
+  const transacoesFiltradas = transacoes.filter((transacao) => {
+    if (filtro === "todos") {
+      return true; //mostra todas as transaçoes
     } else {
-      return transacao.tipo === filtro //mostra somente as transaçoes do tipo selecionado no filtro
+      return transacao.tipo === filtro; //mostra somente as transaçoes do tipo selecionado no filtro
     }
-  })
+  });
 
   //funçao para adicionar valores
   async function adicionarTransacao() {
-    const novaTransacao = { //caixa da nova transaçao
-      id: Date.now(), //gera um id unico baseado no tempo atual
+    if (!novaDescricao || !novoValor) return;
+
+    setCarregando(true);
+
+    const novaTransacao = {
+      //caixa da nova transaçao
+      data: new Date().toISOString(), //boa pratica, salvar data
       descricao: novaDescricao,
       valor: Number(novoValor), //garante que o valor seja um numero
-      tipo: novoTipo
+      tipo: novoTipo,
+    };
+
+    try {
+      //adiciona a nova transaçao no banco de dados do firebase
+      await salvarTransacao(novaTransacao);
+
+      setNovaDescricao(""); //limpa o campo de descricao
+      setNovoValor(""); //limpa o campo de valor
+      setNovoTipo("entrada"); //reseta o tipo para 'entrada'
+    } catch (error) {
+      //se o valor for igual a zero, nao entra na lista de transaçoes, entao nao tem
+      console.error("Erro ao adicionar transação:", error);
+      alert(
+        "Ocorreu um erro ao adicionar a transação. Por favor, tente novamente.",
+      );
+    } finally {
+      setCarregando(false);
     }
-
-    //adiciona a nova transaçao no banco de dados do firebase
-    await addDoc(collection(db, 'transacoes'), novaTransacao);
-
-    setNovaDescricao('') //limpa o campo de descricao
-    setNovoValor('') //limpa o campo de valor
-    setNovoTipo('entrada') //reseta o tipo para 'entrada'
-
-    //se o valor for igual a zero, nao entra na lista de transaçoes, entao nao tem
-
   }
 
   //funçao para excluir transaçoes
   async function excluirTransacao(idFirebase) {
-
-    //localiza o documento no cofre usando o ID
-    const documentoParaDeletar = doc(db, 'transacoes', idFirebase)
-
-    //manda o google excluir ele.
-    await deleteDoc(documentoParaDeletar)
+    try {
+      //manda o google excluir ele.
+      await removerTransacao(idFirebase);
+    } catch (error) {
+      console.error("Erro ao excluir transação:", error);
+    }
   }
 
   //effect para pegar as transaçoes do banco de dados do firebase em tempo real, toda vez que tiver uma nova transaçao adicionada, ele atualiza a lista de transaçoes automaticamente
   useEffect(() => {
-    const q = query(collection(db, 'transacoes')) //cria uma consulta para pegar a coleção de transaçoes do banco de dados
+    //quando a foto estiver pronta, use o setTransacoes para atualizar a tela.
+    const desinscrever = buscarTransacoes(setTransacoes); //
 
-    //ligando o ouvinte
-    const desinscrever = onSnapshot(q, (snapshot) => {
-      const dadosDaNuvem = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id //pega o id do documento do firebase e adiciona na transaçao para poder excluir depois
-      }));
-      setTransacoes(dadosDaNuvem) //atualiza a lista de transaçoes com os dados do banco de dados toda vez que tiver uma mudança (adicionar ou excluir transaçao)
-    });
-    return () => desinscrever()//botao off
-  }, []); //*IMPORTANTE* esse cara diz para ligar o radio apenas uma vez.
+    return () => desinscrever();
+  }, []);
 
   //funçao para guardar na reserva de emergencia, toda vez que o valor da reserva mudar, ele salva o novo valor no localstorage
-  function guardarReserva() {
-    const valorDigitado = Number(valorInputReserva) //converte o valor digitado para numero
-    if (valorDigitado > 0 && valorDigitado <= resultadoSaldo) { //verifica se o valor digitado é maior que zero e menor ou igual ao saldo total
-      setReserva(reserva + valorDigitado) // pega o valor atual do cofre e soma com o que foi digitado
+  async function guardarReserva() {
+    const valorDigitado = Number(valorInputReserva); //converte o valor digitado para numero
+    if (valorDigitado > 0 && valorDigitado <= resultadoSaldo) {
+      //verifica se o valor digitado é maior que zero e menor ou igual ao saldo total
+      setReserva(reserva + valorDigitado); // pega o valor atual do cofre e soma com o que foi digitado
 
       //toda vez que guardar o valor, ele vai fazer uma transaçao de saida para o valor guardado.
       const transacaoTranferencia = {
-        id: Date.now(),
-        descricao: 'Aporte na reserva de Emergência',
+        data: new Date().toISOString(),
+        descricao: "Aporte na reserva de Emergência",
         valor: valorDigitado,
-        tipo: 'saida'
-      }
+        tipo: "saida",
+      };
 
-      setTransacoes([...transacoes, transacaoTranferencia]) //adiciona a transaçao de saida do valor guardado na reserva
+      await salvarTransacao(transacaoTranferencia); //adiciona a transaçao de saida do valor guardado na reserva
 
-      setValorInputReserva('') //limpa o campo de entrada da reserva
-    }
-    else {
-      alert('Valor inválido para guardar na reserva. Verifique se o valor é positivo e não excede o saldo total.')
-      setValorInputReserva('') //limpa o campo de entrada da reserva caso o valor seja inválido
+      setValorInputReserva(""); //limpa o campo de entrada da reserva
+    } else {
+      alert(
+        "Valor inválido para guardar na reserva. Verifique se o valor é positivo e não excede o saldo total.",
+      );
+      setValorInputReserva(""); //limpa o campo de entrada da reserva caso o valor seja inválido
     }
   }
 
   //funçao para retirar dinheiro da reserva de emergencia, toda vez que o valor da reserva mudar, ele salva o novo valor no localstorage
-  function resgatarReserva() {
-    const valorDigitado = Number(valorInputReserva) //converte o valor digitado para numero
+  async function resgatarReserva() {
+    const valorDigitado = Number(valorInputReserva); //converte o valor digitado para numero
     if (valorDigitado > 0 && valorDigitado <= reserva) {
-      setReserva(reserva - valorDigitado) // pega o valor atual do cofre e subtrai com o que foi digitado
+      setReserva(reserva - valorDigitado); // pega o valor atual do cofre e subtrai com o que foi digitado
 
       //toda vez que resgatar o valor, ele vai fazer uma transaçao de entrada para o valor resgatado.
       const transacaoTranferencia = {
-        id: Date.now(),
-        descricao: 'Resgate da reserva de Emergência',
+        descricao: "Resgate da reserva de Emergência",
         valor: valorDigitado,
-        tipo: 'entrada'
-      }
+        tipo: "entrada",
+        data: new Date().toISOString(),
+      };
 
-      setTransacoes([...transacoes, transacaoTranferencia]) //adiciona a transaçao de entrada do valor resgatado da reserva
+      await salvarTransacao(transacaoTranferencia); //adiciona a transaçao de entrada do valor resgatado da reserva
 
-      setValorInputReserva('') //limpa o campo de entrada da reserva
-    }
-    else {
-      alert('Valor inválido para resgatar da reserva. Verifique se o valor é positivo e não excede o valor disponível na reserva.')
-      setValorInputReserva('') //limpa o campo de entrada da reserva caso o valor seja inválido
+      setValorInputReserva(""); //limpa o campo de entrada da reserva
+    } else {
+      alert(
+        "Valor inválido para resgatar da reserva. Verifique se o valor é positivo e não excede o valor disponível na reserva.",
+      );
+      setValorInputReserva(""); //limpa o campo de entrada da reserva caso o valor seja inválido
     }
   }
 
   //sentinela da reserva de emergencia. Toda vez que a reserva mudar, ele salva o novo valor no localstorage
   useEffect(() => {
-    localStorage.setItem('reserva_emergencia', reserva.toString()) //salva o valor da reserva no localstorage como string
-  }, [reserva])//o useEffect é executado toda vez que o valor da reserva mudar
-
-  //funçao para transformar numeros puro em Reais(R$)
-  function formatarDinheiro(valor) {
-    return Number(valor).toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
-  }
-
+    localStorage.setItem("reserva_emergencia", reserva.toString()); //salva o valor da reserva no localstorage como string
+  }, [reserva]); //o useEffect é executado toda vez que o valor da reserva mudar
 
   return (
     <div className="App">
       <h1>Meu Controle Financeiro</h1>
 
       {/*Menu de Navegação*/}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "20px",
+          justifyContent: "center",
+        }}
+      >
         <button
-          className={telaAtual === 'principal' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'}
-          onClick={() => setTelaAtual('principal')}
+          className={
+            telaAtual === "principal"
+              ? "btn-filtro btn-filtro-ativo"
+              : "btn-filtro"
+          }
+          onClick={() => setTelaAtual("principal")}
         >
           Dia a Dia
         </button>
 
         <button
-          className={telaAtual === 'reserva' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'}
-          onClick={() => setTelaAtual('reserva')}
+          className={
+            telaAtual === "reserva"
+              ? "btn-filtro btn-filtro-ativo"
+              : "btn-filtro"
+          }
+          onClick={() => setTelaAtual("reserva")}
         >
           Reserva de Emergência
         </button>
-
       </div>
 
-      <h2 style={{ color: corSaldo }}>Saldo Total: {formatarDinheiro(resultadoSaldo)}</h2>
+      <h2 style={{ color: corSaldo }}>
+        Saldo Total: {formatarDinheiro(resultadoSaldo)}
+      </h2>
 
       {/*Tela da Reserva de Emergência*/}
-      {telaAtual === 'reserva' && (
+      {telaAtual === "reserva" && (
         <PainelReserva
           reserva={reserva}
           formatarDinheiro={formatarDinheiro}
@@ -193,7 +224,7 @@ function App() {
       )}
 
       {/*Tela do Controle Financeiro*/}
-      {telaAtual === 'principal' && (
+      {telaAtual === "principal" && (
         <PainelPrincipal
           novaDescricao={novaDescricao}
           setNovaDescricao={setNovaDescricao}
@@ -208,11 +239,11 @@ function App() {
           transacoesFiltradas={transacoesFiltradas}
           excluirTransacao={excluirTransacao}
           formatarDinheiro={formatarDinheiro}
+          carregando={carregando}
         />
       )}
-    </div >
-
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

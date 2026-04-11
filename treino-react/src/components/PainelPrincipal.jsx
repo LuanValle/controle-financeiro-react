@@ -7,7 +7,8 @@ function PainelPrincipal({
     filtro, setFiltro,
     transacoes, transacoesFiltradas,
     formatarDinheiro, excluirTransacao,
-    adicionarTransacao
+    adicionarTransacao,
+    carregando
 
 }) {
     return (
@@ -33,7 +34,7 @@ function PainelPrincipal({
                     <option value="saida">Saída</option>
                 </select>
 
-                <button className='btn-adicionar' onClick={adicionarTransacao}>Adicionar</button>
+                <button className='btn-adicionar' onClick={adicionarTransacao} disabled={carregando}>{carregando ? 'Salvando...' : 'Adicionar'}</button>
             </div>
 
             {/* Filtro de transações */}
