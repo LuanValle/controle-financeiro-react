@@ -102,11 +102,6 @@ h2 {
     margin-bottom: 0;
 }
 
-.btn-adicionar{
-    padding: 12px 20px;
-    height: 100%;
-}
-
 input, select {
     width: 95%;
     padding: 12px;
@@ -249,6 +244,55 @@ input:focus {
 .nav-menu .btn-filtro {
     flex: 1; /* Faz os dois botões terem exatamente o mesmo tamanho */
     max-width: 200px;
+}
+
+/* Fundo escuro que centraliza o conteúdo */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center; /* Centraliza na horizontal */
+  align-items: center;     /* Centraliza na vertical */
+  z-index: 1000;
+}
+
+/* O quadrado centralizado */
+.modal-content {
+    background-color: #ffffff;
+    width: min(90vw, 420px);
+    max-height: 90vh;
+    overflow-y: auto;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column; /* Coloca um item embaixo do outro */
+    gap: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
+}
+
+.modal-titulo {
+    margin: 0 0 8px;
+    text-align: left;
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.modal-acoes .btn-adicionar {
+    min-width: 110px;
 }
 
 /* Responsividade */

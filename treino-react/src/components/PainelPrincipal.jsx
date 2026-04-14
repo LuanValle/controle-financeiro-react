@@ -1,20 +1,23 @@
 function PainelPrincipal({
     novaDescricao, setNovaDescricao,
     novoValor, setNovoValor,
-    novaCategoria, setNovaCategoria,
-    novaData, setNovaData,
     novoTipo, setNovoTipo,
     filtro, setFiltro,
     transacoes, transacoesFiltradas,
     formatarDinheiro, excluirTransacao,
     adicionarTransacao,
-    carregando
+    carregando, setModalAberto,
+    modalAberto
 
 }) {
     return (
         <div>
-            <h3>Adicionar Transação</h3>
-            <div className="painel-formulario">
+            <button className='btn-adicionar' onClick={() => setModalAberto(true)}>Nova transação</button>
+
+            {modalAberto && (
+            <div className="modal-overlay" onClick={() => setModalAberto(false)}>
+                <div className="modal-content" onClick={(evento) => evento.stopPropagation()}>
+                <h3 className="modal-titulo">Adicionar Transação</h3>
                 <input type="text" placeholder='Descrição' className='campo-entrada' value={novaDescricao} onChange={(evento) => setNovaDescricao(evento.target.value)} />
 
                 <input type="number"
@@ -28,8 +31,14 @@ function PainelPrincipal({
                     <option value="saida">Saída</option>
                 </select>
 
-                <button className='btn-adicionar' onClick={adicionarTransacao} disabled={carregando}>{carregando ? 'Salvando...' : 'Adicionar'}</button>
+                <div className="modal-acoes">
+                    <button className='btn-filtro' onClick={() => setModalAberto(false)}>Cancelar</button>
+                    <button className='btn-adicionar' onClick={adicionarTransacao} disabled={carregando}>{carregando ? 'Salvando...' : 'Adicionar'}</button>
+                </div>
+                </div>
             </div>
+            )}
+            
 
             {/* Filtro de transações */}
             <div className='painel-filtros'>

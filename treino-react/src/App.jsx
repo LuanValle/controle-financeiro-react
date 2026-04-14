@@ -48,6 +48,7 @@ function App() {
   const [telaAtual, setTelaAtual] = useState("principal"); //variavel para controlar qual tela esta sendo exibida, se a tela de controle ou a tela de relatorios
   const [carregando, setCarregando] = useState(false); //mostrar tela de loading na tela enquanto nao carregou os dados.
   const [usuario, setUsuario] = useState(null); //variavel para armazenar as informaçoes do usuário logado, ou null se nao tiver nenhum usuário logado
+  const [modalAberto, setModalAberto] = useState(false); //controla quando abrimos ou fechamos o modal de confirmaçao
 
   //calcular o saldo total
   const resultadoSaldo = transacoes.reduce(
@@ -271,8 +272,14 @@ function App() {
           excluirTransacao={excluirTransacao}
           formatarDinheiro={formatarDinheiro}
           carregando={carregando}
+          setModalAberto={setModalAberto}
+          modalAberto={modalAberto}
         />
       )}
+
+      
+
+
         </>
       )}
     </div>
