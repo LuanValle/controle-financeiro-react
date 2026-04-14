@@ -1,16 +1,30 @@
-# React + Vite
+# 💰 Gestor Financeiro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Um aplicativo web para controle financeiro pessoal e gestão de reservas de emergência, desenvolvido com foco em segurança, privacidade e usabilidade em tempo real.
 
-Currently, two official plugins are available:
+> 🚀 **O projeto está online!** Você pode testar a aplicação diretamente no link abaixo:
+> **[Acesse o Gestor Financeiro no Vercel](https://controle-financeiro-react-two.vercel.app/)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 💻 Funcionalidades Atuais
 
-## React Compiler
+O aplicativo já conta com um motor funcional e seguro, permitindo:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Gestão de Transações:** Adição e remoção de entradas e saídas de forma intuitiva.
+* **Cálculos Automáticos:** Atualização em tempo real do Saldo Total, Total de Entradas e Total de Saídas.
+* **Reserva de Emergência:** Painel dedicado para guardar ou resgatar valores de uma reserva separada do saldo principal.
+* **Autenticação Segura:** Sistema de login para garantir o acesso individualizado.
+* **Privacidade de Dados:** Isolamento completo de informações. Cada usuário visualiza apenas as próprias transações, protegido por regras de segurança diretamente no servidor (Firestore Rules).
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologias Utilizadas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Front-end:** React.js, CSS3 (Flexbox, Design Responsivo)
+* **Hospedagem:** Vercel ☁️
+* **Back-end/BaaS:** Firebase
+  * *Firebase Authentication* (Gestão de usuários)
+  * *Cloud Firestore* (Banco de dados NoSQL em tempo real)
+
+## 🚀 Como executar o projeto localmente
+
+1. Faça o clone do repositório:
+   ```bash
+   git clone [https://github.com/SEU-USUARIO/gestor-financeiro.git](https://github.com/LuanValle)
