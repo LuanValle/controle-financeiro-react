@@ -1,6 +1,6 @@
 //gerente do banco de dados
 
-import {collection, addDoc, onSnapshot, query, doc, deleteDoc, where} from 'firebase/firestore'
+import {collection, addDoc, onSnapshot, query, doc, deleteDoc, where, serverTimestamp, orderBy} from 'firebase/firestore'
 import { db } from '../firebase'
 import { auth } from '../firebase'
 
@@ -13,7 +13,8 @@ export const salvarTransacao = async (novaTransacao) =>{
 
     return await addDoc(collection(db, 'transacoes'), {
         ...novaTransacao, 
-        userId: usuarioAtual.uid //adiciona o id do usuário à transação
+        userId: usuarioAtual.uid, //adiciona o id do usuário à transação
+        criadoEm: serverTimestamp() //adiciona um timestamp para a transação
     })
 }
 
@@ -28,7 +29,7 @@ export const buscarTransacoes = (aoAtualizar) => {
 
     if(!usuarioAtual) return;  //verifica se o usuário está autenticado, se nao, nao busca nada!
 
-    const q = query(collection(db, 'transacoes'), where('userId', '==', usuarioAtual.uid)) //cria uma consulta para pegar
+    const q = query(collection(db, 'transacoes'), where('userId', '==', usuarioAtual.uid), orderBy('criadoEm', 'desc')) //cria uma consulta para pegar
 
     return onSnapshot(q, (snapshot) => {
         const dados = snapshot.docs.map(doc => ({
