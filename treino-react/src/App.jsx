@@ -7,6 +7,10 @@ import {
   removerTransacao,
   buscarTransacoes,
 } from "./services/transacaoService";
+import {auth} from './firebase'
+import { onAuthStateChanged } from "firebase/auth";
+import Login from "./components/Login";
+import { logoutUsuario } from "./services/authServices";
 
 const CORES = {
   sucesso: "#22c55e",
@@ -22,6 +26,7 @@ function formatarDinheiro(valor) {
 }
 
 function App() {
+
   //useStats
   const [transacoes, setTransacoes] = useState([]);
 
@@ -42,6 +47,7 @@ function App() {
   const [valorInputReserva, setValorInputReserva] = useState(""); //controla o que esta sendo digitado no campo da reserva.
   const [telaAtual, setTelaAtual] = useState("principal"); //variavel para controlar qual tela esta sendo exibida, se a tela de controle ou a tela de relatorios
   const [carregando, setCarregando] = useState(false); //mostrar tela de loading na tela enquanto nao carregou os dados.
+  const [usuario, setUsuario] = useState(null); //variavel para armazenar as informaçoes do usuário logado, ou null se nao tiver nenhum usuário logado
 
   //calcular o saldo total
   const resultadoSaldo = transacoes.reduce(
@@ -110,8 +116,21 @@ function App() {
   //effect para pegar as transaçoes do banco de dados do firebase em tempo real, toda vez que tiver uma nova transaçao adicionada, ele atualiza a lista de transaçoes automaticamente
   useEffect(() => {
     //quando a foto estiver pronta, use o setTransacoes para atualizar a tela.
-    const desinscrever = buscarTransacoes(setTransacoes); //
+    const desinscrever = buscarTransacoes(setTransacoes);
 
+    return () => {
+      if (desinscrever) {
+        desinscrever(); //desinscreve o listener para evitar vazamento de memória quando o componente for desmontado
+      }
+    };
+  }, [usuario]); // vai atualizar toda vez que o usuario mudar.
+
+  //effect para monitorar o estado de autenticaçao do usuário, toda vez que o usuário fizer login ou logout, ele atualiza a variavel usuario com as informaçoes do usuário logado ou null se nao tiver nenhum usuário logado
+  useEffect(() => {
+    const desinscrever = onAuthStateChanged(auth, (usuarioLogado) => {
+      setUsuario(usuarioLogado);
+    });
+    
     return () => desinscrever();
   }, []);
 
@@ -173,16 +192,28 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Meu Controle Financeiro</h1>
+      
 
-      {/*Menu de Navegação*/}
+      {/* Exibe o painel de login se o usuário não estiver autenticado, caso contrário, exibe o conteúdo principal do aplicativo */}
+      {!usuario ? (
+        <Login />
+        ) : (
+        <>
+        <h1>Meu Controle Financeiro</h1>
+        
+        <div className="app-header">
+          <p className="user-email">logado como: <strong>{usuario.email}</strong></p>
+        {/* Botão de logout para o usuário sair da conta */}
+          <button
+            onClick={logoutUsuario}
+            className="btn-logout"
+            >Sair da Conta</button>
+        {/* Fim do botão de logout */}
+        </div>
+        
+        {/*Menu de Navegação*/}
       <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginBottom: "20px",
-          justifyContent: "center",
-        }}
+        className="nav-menu"
       >
         <button
           className={
@@ -241,6 +272,8 @@ function App() {
           formatarDinheiro={formatarDinheiro}
           carregando={carregando}
         />
+      )}
+        </>
       )}
     </div>
   );

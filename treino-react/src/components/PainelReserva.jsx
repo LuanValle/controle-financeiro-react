@@ -10,7 +10,7 @@ function PainelReserva({
 
     return(
 
-    <div style={{backgroundColor: '#eff6ff', padding:'20px', borderRadius:'8px', marginBottom:'30px', border:'1px solid #bfdbfe'}}>
+    <div className='painel-reserva-container'>
         <h3 style={{color: '#3b82f6'}}>
         Reserva de Emergência: {formatarDinheiro(reserva)}
         </h3>

@@ -15,13 +15,7 @@ function PainelPrincipal({
         <div>
             <h3>Adicionar Transação</h3>
             <div className="painel-formulario">
-
-                <input type="text"
-                    placeholder='Descrição'
-                    className='campo-entrada'
-                    value={novaDescricao}
-                    onChange={(evento) => setNovaDescricao(evento.target.value)
-                    } />
+                <input type="text" placeholder='Descrição' className='campo-entrada' value={novaDescricao} onChange={(evento) => setNovaDescricao(evento.target.value)} />
 
                 <input type="number"
                     placeholder='valor'
@@ -55,11 +49,14 @@ function PainelPrincipal({
             {/* O map percorre a lista de transaçoes e para cada transaçao ele cria um item de lista (li) com a descricao, valor e tipo da transaçao */}
             <ul className='lista-transacoes'>
                 {transacoesFiltradas.map(transacao => (
-                    <li key={transacao.id} className='cartao-transacao'
+                    <li key={transacao.id} className='transacao-item'
                         style={{
                             backgroundColor: transacao.tipo === 'entrada' ? '#dcfce7' : '#fee2e2'
                         }}>
-                        {transacao.descricao}: {formatarDinheiro(transacao.valor)}
+                        <div className="transacao-info">
+                            <span className="transacao-descricao">{transacao.descricao}</span>
+                            <span className="transacao-valor">{formatarDinheiro(transacao.valor)}</span>
+                        </div>
                         <button className='btn-excluir' onClick={() => excluirTransacao(transacao.id)} >x</button>
                     </li>
                 ))}

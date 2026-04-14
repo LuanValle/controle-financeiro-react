@@ -1,120 +1,261 @@
-/* Remove as bolinhas da lista e o recuo padrão */
-.lista-transacoes {
-    list-style: none;
-    padding: 0;
-    margin-top: 30px;
+/* Importando a fonte Inter para ficar com cara de App Profissional */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --danger-dark: #dc2626;
+    --bg: #f9fafb;
+    --text-main: #1f2937;
+    --text-sub: #6b7280;
+    --white: #ffffff;
+    --border: #e5e7eb;
 }
 
-/* O visual do cartão */
-.cartao-transacao {
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 10px;
+body {
+    background-color: var(--bg);
+    margin: 0;
+    color: var(--text-main);
+}
+
+.App {
+    max-width: 500px; /* Um pouco mais estreito fica mais elegante em telas grandes */
+    margin: 40px auto;
+    padding: 24px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    min-height: auto; /* Deixa o cartão "flutuar" no centro */
+}
+
+/* Títulos */
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+h2 {
+    font-size: 1.25rem;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* Informações de Usuário e Logout */
+.user-info {
     display: flex;
     justify-content: space-between;
-    /* Empurra o botão para a direita */
     align-items: center;
-    /* Alinha tudo no centro verticalmente */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Deixando o botão de excluir com cara de alerta */
-.btn-excluir {
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.btn-excluir:hover {
-    background-color: #dc2626;
-}
-
-/* Container do formulário */
-.painel-formulario {
-    background-color: #ffffff;
-    padding: 20px;
+    background: #f3f4f6;
+    padding: 8px 12px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    /* Coloca os itens lado a lado */
-    gap: 15px;
-    /* Espaço automático entre os campos */
-    margin-bottom: 30px;
-    margin-top: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
 }
 
-/* Estilo dos campos de texto, número e select */
-.campo-entrada {
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    flex: 1;
-    /* Faz os campos esticarem e dividirem o espaço igualmente */
-    font-size: 16px;
-}
-
-/* Botão principal de adicionar */
-.btn-adicionar {
-    background-color: #3b82f6;
-    /* Azul moderno */
-    color: white;
+.btn-logout {
+    background-color: var(--danger);
+    color: var(--white);
     border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: var(--danger-dark);
+}
+
+/* Formulários e Inputs */
+.painel-formulario  {
+    background-color: #f3f4f6;
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row; /* Melhor para mobile e organização */
+    align-items: center;
+    gap: 10px; /* Dá um espaço entre os campos */
+    margin-bottom: 24px;
+}
+
+.painel-reserva-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.painel-formulario input[type="text"]{
+    flex: 2; /* O campo de descrição pode ser maior */
+}
+
+.painel-formulario .campo-entrada{
+    flex: 1; /* Faz os campos ocuparem o mesmo espaço */
+    min-width: 0; /* Evita que campos grandes quebrem o layout */
+    margin-bottom: 0;
+}
+
+.btn-adicionar{
+    padding: 12px 20px;
+    height: 100%;
+}
+
+input, select {
+    width: 95%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 0.2s;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-adicionar {
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 700;
     cursor: pointer;
     transition: 0.2s;
-    /* Deixa a mudança de cor suave */
 }
 
 .btn-adicionar:hover {
-    background-color: #2563eb;
-    /* Azul mais escuro no hover */
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
-/* Estilo para o filtro de transações */
-/* Container para alinhar os filtros */
+/* Filtros */
 .painel-filtros {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 20px;
     justify-content: center;
-    /* Centraliza os botões */
 }
 
-/* Visual estilo "pílula" para os botões secundários */
 .btn-filtro {
-    background-color: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
-    border-radius: 20px;
-    /* Isso deixa o botão redondinho */
-    padding: 8px 16px;
+    background-color: var(--white);
+    color: var(--text-sub);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 16px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.btn-filtro-ativo {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.user-email {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    margin: 0;
+}
+/* Lista de Transações */
+.lista-transacoes {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.transacao-item {
+    background: var(--white);
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between; /* Empurra o conteúdo para os lados */
+    align-items: center;
+    border: 1px solid var(--border);
+    border-left: 6px solid #ccc;
+    gap: 10px; /* Dá um respiro entre o texto e o botão */
+}
+
+.transacao-item:hover {
+    transform: scale(1.02);
+}
+
+.transacao-entrada { border-left-color: var(--success); }
+.transacao-saida { border-left-color: var(--danger); }
+
+.transacao-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Faz o texto ocupar todo o espaço disponível */
+    overflow: hidden; /* Evita que textos gigantes quebrem o layout */
+}
+
+.transacao-descricao {
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Se o nome for muito grande, coloca "..." */
+}
+
+.transacao-valor {
+    font-size: 0.9rem;
+    color: var(--text-sub);
+}
+
+.btn-excluir {
+    background-color: #fee2e2;
+    color: var(--danger);
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
     transition: 0.2s;
 }
 
-.btn-filtro:hover {
-    background-color: #e5e7eb;
+.btn-excluir:hover {
+    background-color: var(--danger);
+    color: var(--white);
 }
 
-/* Classe para quando o filtro estiver selecionado */
-.btn-filtro-ativo {
-    background-color: #3b82f6;
-    /* O nosso azul principal */
-    color: white;
-    border-color: #3b82f6;
+.nav-menu {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 25px;
 }
 
-@media (max-width: 768px){
-    .painel-formulario{
-        flex-direction: column;
+.nav-menu .btn-filtro {
+    flex: 1; /* Faz os dois botões terem exatamente o mesmo tamanho */
+    max-width: 200px;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .App {
+        margin: 0;
+        max-width: 100%;
+        border-radius: 0;
     }
 }
