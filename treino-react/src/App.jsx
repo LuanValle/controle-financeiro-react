@@ -6,6 +6,7 @@ import {
   salvarTransacao,
   removerTransacao,
   buscarTransacoes,
+  atualizarTransacao,
 } from "./services/transacaoService";
 import {auth} from './firebase'
 import { onAuthStateChanged } from "firebase/auth";
@@ -49,6 +50,8 @@ function App() {
   const [carregando, setCarregando] = useState(false); //mostrar tela de loading na tela enquanto nao carregou os dados.
   const [usuario, setUsuario] = useState(null); //variavel para armazenar as informaçoes do usuário logado, ou null se nao tiver nenhum usuário logado
   const [modalAberto, setModalAberto] = useState(false); //controla quando abrimos ou fechamos o modal de confirmaçao
+  const [novaCategoria, setNovaCategoria] = useState("Alimentação"); //controla o valor do campo de categoria
+  const [transacaoEmEdicao, setTransacaoEmEdicao] = useState(null); //se for null ta criando uma nova, se tiver id, editando
 
   //calcular o saldo total
   const resultadoSaldo = transacoes.reduce(
@@ -82,17 +85,27 @@ function App() {
       //caixa da nova transaçao
       data: new Date().toISOString(), //boa pratica, salvar data
       descricao: novaDescricao,
+      categoria: novaCategoria,
       valor: Number(novoValor), //garante que o valor seja um numero
       tipo: novoTipo,
     };
 
     try {
-      //adiciona a nova transaçao no banco de dados do firebase
-      await salvarTransacao(novaTransacao);
+
+      //condiçao para verificar se estamos editando ou criando uma nova transaçao
+      if(transacaoEmEdicao !== null){
+        await atualizarTransacao(transacaoEmEdicao, novaTransacao); //chama a funçao de atualizar a transaçao, passando o id da transaçao em ediçao e os novos dados da transaçao
+
+      }else{
+        await salvarTransacao(novaTransacao); //chama a funçao de salvar a nova transaçao, passando os
+      }
 
       setNovaDescricao(""); //limpa o campo de descricao
       setNovoValor(""); //limpa o campo de valor
       setNovoTipo("entrada"); //reseta o tipo para 'entrada'
+      setNovaCategoria("Alimentação"); //reseta a categoria para 'Alimentação'
+      setModalAberto(false); //fecha o modal de confirmaçao
+
     } catch (error) {
       //se o valor for igual a zero, nao entra na lista de transaçoes, entao nao tem
       console.error("Erro ao adicionar transação:", error);
@@ -102,6 +115,33 @@ function App() {
     } finally {
       setCarregando(false);
     }
+  }
+
+  //funçao para editar transaçoes
+  function iniciarEdicao(transacao){
+
+    //preencher os dados.
+    setNovaDescricao(transacao.descricao);
+    setNovaCategoria(transacao.categoria);
+    setNovoValor(transacao.valor);
+    setNovoTipo(transacao.tipo);
+
+    //mudar o modo
+    setTransacaoEmEdicao(transacao.id);
+
+    //abrir a janela
+    setModalAberto(true);
+
+  }
+
+  //funçao para limpar o modal quando for abrir novatransacao
+  function prepararNovaTransacao(){
+    setNovaDescricao("");
+    setNovaCategoria("Alimentação");
+    setNovoValor("");
+    setNovoTipo("entrada");
+    setTransacaoEmEdicao(null);
+    setModalAberto(true);
   }
 
   //funçao para excluir transaçoes
@@ -274,6 +314,11 @@ function App() {
           carregando={carregando}
           setModalAberto={setModalAberto}
           modalAberto={modalAberto}
+          novaCategoria={novaCategoria}
+          setNovaCategoria={setNovaCategoria}
+          iniciarEdicao={iniciarEdicao}
+          transacaoEmEdicao={transacaoEmEdicao}
+          prepararNovaTransacao={prepararNovaTransacao}
         />
       )}
 

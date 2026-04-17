@@ -7,30 +7,48 @@ function PainelPrincipal({
     formatarDinheiro, excluirTransacao,
     adicionarTransacao,
     carregando, setModalAberto,
-    modalAberto
+    modalAberto, 
+    novaCategoria, setNovaCategoria,
+    iniciarEdicao, transacaoEmEdicao,
+    prepararNovaTransacao
+
 
 }) {
     return (
         <div>
-            <button className='btn-adicionar' onClick={() => setModalAberto(true)}>Nova transação</button>
+            <button className='btn-adicionar' onClick={() => prepararNovaTransacao()}>Nova transação</button>
 
             {modalAberto && (
             <div className="modal-overlay" onClick={() => setModalAberto(false)}>
                 <div className="modal-content" onClick={(evento) => evento.stopPropagation()}>
-                <h3 className="modal-titulo">Adicionar Transação</h3>
+                <h3 className="modal-titulo">{transacaoEmEdicao == null ? 'Adicionar' : 'Editar'} Transação</h3>
+
+                {/* Campo de descriçao */}
                 <input type="text" placeholder='Descrição' className='campo-entrada' value={novaDescricao} onChange={(evento) => setNovaDescricao(evento.target.value)} />
 
+                {/* Campo de categoria */}
+                <select className='campo-entrada' value={novaCategoria} onChange={(evento) => setNovaCategoria(evento.target.value)}>
+                    <option value="Alimentação">Alimentação</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Saúde">Saúde</option>
+                    <option value="Lazer">Lazer</option>
+                    <option value="Outros">Outros</option>
+                </select>
+
+                {/* Campo de valor */}
                 <input type="number"
                     placeholder='valor'
                     className='campo-entrada'
                     value={novoValor}
                     onChange={(evento) => setNovoValor(evento.target.value)} />
 
+                {/* Campo de tipo */}
                 <select name="tipo" id="tipo" className='campo-entrada' value={novoTipo} onChange={(evento) => setNovoTipo(evento.target.value)} >
                     <option value="entrada">Entrada</option>
                     <option value="saida">Saída</option>
                 </select>
 
+                {/* Açoes do modal */}
                 <div className="modal-acoes">
                     <button className='btn-filtro' onClick={() => setModalAberto(false)}>Cancelar</button>
                     <button className='btn-adicionar' onClick={adicionarTransacao} disabled={carregando}>{carregando ? 'Salvando...' : 'Adicionar'}</button>
@@ -62,10 +80,14 @@ function PainelPrincipal({
                         style={{
                             backgroundColor: transacao.tipo === 'entrada' ? '#dcfce7' : '#fee2e2'
                         }}>
+
+                        {/*area que mostra as informaçoes da transaçao */}
                         <div className="transacao-info">
                             <span className="transacao-descricao">{transacao.descricao}</span>
                             <span className="transacao-valor">{formatarDinheiro(transacao.valor)}</span>
+                            <span className="transacao-categoria"><strong>Categoria:</strong> {transacao.categoria || 'Sem categoria'}</span>
                         </div>
+                        <button className='btn-editar' onClick={() => iniciarEdicao(transacao)}>✏️</button>
                         <button className='btn-excluir' onClick={() => excluirTransacao(transacao.id)} >x</button>
                     </li>
                 ))}

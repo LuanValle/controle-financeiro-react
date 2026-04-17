@@ -1,6 +1,6 @@
 //gerente do banco de dados
 
-import {collection, addDoc, onSnapshot, query, doc, deleteDoc, where, serverTimestamp, orderBy} from 'firebase/firestore'
+import {collection, addDoc, onSnapshot, query, doc, deleteDoc, where, serverTimestamp, orderBy, updateDoc} from 'firebase/firestore'
 import { db } from '../firebase'
 import { auth } from '../firebase'
 
@@ -16,6 +16,12 @@ export const salvarTransacao = async (novaTransacao) =>{
         userId: usuarioAtual.uid, //adiciona o id do usuário à transação
         criadoEm: serverTimestamp() //adiciona um timestamp para a transação
     })
+}
+
+//funçao para atualizar a transaçao no banco de dados do firebase
+export async function atualizarTransacao(idFirebase, transacaoAtualizada) {
+    await updateDoc(doc(db, 'transacoes', idFirebase), transacaoAtualizada);
+
 }
 
 //funçao para remover a transação do banco de dados do firebase
