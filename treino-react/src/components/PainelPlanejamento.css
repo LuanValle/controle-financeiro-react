@@ -1,0 +1,98 @@
+.painel-planejamento {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.planejamento-titulo {
+    margin: 0;
+    text-align: center;
+}
+
+.planejamento-subtitulo {
+    margin: 0;
+    color: var(--text-sub);
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.planejamento-controles {
+    background-color: #f3f4f6;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.planejamento-label {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    font-weight: 600;
+}
+
+.planejamento-controles input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.planejamento-tabela-wrapper {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--white);
+}
+
+.planejamento-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.planejamento-tabela th,
+.planejamento-tabela td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.planejamento-tabela th {
+    background-color: #f3f4f6;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.planejamento-tabela tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.planejamento-tabela tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.saldo-positivo {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.saldo-negativo {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .planejamento-tabela {
+        font-size: 0.84rem;
+    }
+
+    .planejamento-tabela th,
+    .planejamento-tabela td {
+        padding: 8px;
+    }
+}
+
+.linha-hoje {
+  background-color: #90EE90; /* Aquele verde claro que você escolheu */
+  font-weight: bold;         /* Deixa o texto em negrito para destacar mais */
+}

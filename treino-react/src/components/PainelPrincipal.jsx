@@ -32,6 +32,7 @@ function PainelPrincipal({
                     <option value="Transporte">Transporte</option>
                     <option value="Saúde">Saúde</option>
                     <option value="Lazer">Lazer</option>
+                    <option value="diário">Diário</option>
                     <option value="Outros">Outros</option>
                 </select>
 

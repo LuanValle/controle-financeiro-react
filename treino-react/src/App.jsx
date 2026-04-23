@@ -12,6 +12,7 @@ import {auth} from './firebase'
 import { onAuthStateChanged } from "firebase/auth";
 import Login from "./components/Login";
 import { logoutUsuario } from "./services/authServices";
+import PainelPlanejamento from "./components/PainelPlanejamento";
 
 const CORES = {
   sucesso: "#22c55e",
@@ -84,6 +85,7 @@ function App() {
     const novaTransacao = {
       //caixa da nova transaçao
       data: new Date().toISOString(), //boa pratica, salvar data
+      dia: new Date().getDate(), //pega o dia do mes para usar no painel de planejamento
       descricao: novaDescricao,
       categoria: novaCategoria,
       valor: Number(novoValor), //garante que o valor seja um numero
@@ -267,16 +269,13 @@ function App() {
           Dia a Dia
         </button>
 
-        <button
-          className={
-            telaAtual === "reserva"
-              ? "btn-filtro btn-filtro-ativo"
-              : "btn-filtro"
-          }
-          onClick={() => setTelaAtual("reserva")}
-        >
-          Reserva de Emergência
-        </button>
+        {/* botao para acessar a tela de planejamento financeiro */}
+        <button className={telaAtual === "planejamento" ? "btn-filtro btn-filtro-ativo" : "btn-filtro"} 
+          onClick={() => setTelaAtual("planejamento")}>Planejamento</button>
+
+        {/* botao para acessar a tela de reserva de emergencia */}
+        <button className={telaAtual === "reserva" ? "btn-filtro btn-filtro-ativo" : "btn-filtro"}
+          onClick={() => setTelaAtual("reserva")}>Reserva de Emergência</button>
       </div>
 
       <h2 style={{ color: corSaldo }}>
@@ -322,8 +321,13 @@ function App() {
         />
       )}
 
-      
-
+      {/*Tela do Planejamento Financeiro*/}
+      {telaAtual === "planejamento" && (
+        <PainelPlanejamento
+          transacoes={transacoes}
+          formatarDinheiro={formatarDinheiro}
+        />
+      )}
 
         </>
       )}
