@@ -235,15 +235,21 @@ input:focus {
 }
 
 .nav-menu {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
     gap: 10px;
-    justify-content: center;
     margin-bottom: 25px;
 }
 
 .nav-menu .btn-filtro {
-    flex: 1; /* Faz os dois botões terem exatamente o mesmo tamanho */
-    max-width: 200px;
+    width: 100%;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* Fundo escuro que centraliza o conteúdo */
@@ -302,4 +308,19 @@ input:focus {
         max-width: 100%;
         border-radius: 0;
     }
+
+    .nav-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-menu .btn-filtro {
+        min-height: 44px;
+    }
+}
+
+.App {
+    max-width: 900px; /* Aumentamos de 500px para 900px para caber tudo */
+    margin: 40px auto;
+    padding: 24px;
+    /* ... resto do seu código ... */
 }

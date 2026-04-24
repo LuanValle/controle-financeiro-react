@@ -10,7 +10,7 @@ function PainelPrincipal({
     modalAberto, 
     novaCategoria, setNovaCategoria,
     iniciarEdicao, transacaoEmEdicao,
-    prepararNovaTransacao
+    prepararNovaTransacao, novaData, setNovaData
 
 
 }) {
@@ -26,13 +26,32 @@ function PainelPrincipal({
                 {/* Campo de descriçao */}
                 <input type="text" placeholder='Descrição' className='campo-entrada' value={novaDescricao} onChange={(evento) => setNovaDescricao(evento.target.value)} />
 
+                {/* Campo de data */}
+                <label>Data da Transação</label>
+                <input type="date" value={novaData} onChange={(e) => setNovaData(e.target.value)} className="input-custom"/>
+
+                {/* Campo de tipo */}
+                <select name="tipo" id="tipo" className='campo-entrada' value={novoTipo} onChange={(evento) => setNovoTipo(evento.target.value)} >
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
+
+
                 {/* Campo de categoria */}
                 <select className='campo-entrada' value={novaCategoria} onChange={(evento) => setNovaCategoria(evento.target.value)}>
-                    <option value="Alimentação">Alimentação</option>
-                    <option value="Transporte">Transporte</option>
-                    <option value="Saúde">Saúde</option>
-                    <option value="Lazer">Lazer</option>
-                    <option value="diário">Diário</option>
+                    {novoTipo === 'entrada' ? (
+                        <>
+                            <option value="Salário">Salário</option>
+                        </>
+                    ) : (
+                        <>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="diário">Diário</option>
+                        </>
+                    )}
                     <option value="Outros">Outros</option>
                 </select>
 
@@ -43,12 +62,7 @@ function PainelPrincipal({
                     value={novoValor}
                     onChange={(evento) => setNovoValor(evento.target.value)} />
 
-                {/* Campo de tipo */}
-                <select name="tipo" id="tipo" className='campo-entrada' value={novoTipo} onChange={(evento) => setNovoTipo(evento.target.value)} >
-                    <option value="entrada">Entrada</option>
-                    <option value="saida">Saída</option>
-                </select>
-
+                
                 {/* Açoes do modal */}
                 <div className="modal-acoes">
                     <button className='btn-filtro' onClick={() => setModalAberto(false)}>Cancelar</button>
@@ -61,8 +75,7 @@ function PainelPrincipal({
 
             {/* Filtro de transações */}
             <div className='painel-filtros'>
-                <button
-                    className={filtro === 'todos' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('todos')}>Todos</button>
+                <button className={filtro === 'todos' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('todos')}>Todos</button>
                 <button className={filtro === 'entrada' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('entrada')}>Entradas</button>
                 <button className={filtro === 'saida' ? 'btn-filtro btn-filtro-ativo' : 'btn-filtro'} onClick={() => setFiltro('saida')}>Saídas</button>
             </div>

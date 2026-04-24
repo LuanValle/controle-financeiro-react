@@ -53,6 +53,7 @@ function App() {
   const [modalAberto, setModalAberto] = useState(false); //controla quando abrimos ou fechamos o modal de confirmaçao
   const [novaCategoria, setNovaCategoria] = useState("Alimentação"); //controla o valor do campo de categoria
   const [transacaoEmEdicao, setTransacaoEmEdicao] = useState(null); //se for null ta criando uma nova, se tiver id, editando
+  const [novaData, setNovaData] = useState(new Date().toISOString().split('T')[0])
 
   //calcular o saldo total
   const resultadoSaldo = transacoes.reduce(
@@ -82,10 +83,15 @@ function App() {
 
     setCarregando(true);
 
+    const dataObjeto = new Date(novaData);
+    dataObjeto.setMinutes(dataObjeto.getMinutes() + dataObjeto.getTimezoneOffset());
+
     const novaTransacao = {
       //caixa da nova transaçao
-      data: new Date().toISOString(), //boa pratica, salvar data
-      dia: new Date().getDate(), //pega o dia do mes para usar no painel de planejamento
+      data: dataObjeto.toISOString(), //boa pratica, salvar data
+      dia: dataObjeto.getDate(), //pega o dia do mes para usar no planejamento financeiro
+      mes: dataObjeto.getUTCMonth() + 1, //pega o mes para usar no planejamento financeiro
+      ano: dataObjeto.getFullYear(), //pega o ano para usar no planejamento financeiro
       descricao: novaDescricao,
       categoria: novaCategoria,
       valor: Number(novoValor), //garante que o valor seja um numero
@@ -107,6 +113,7 @@ function App() {
       setNovoTipo("entrada"); //reseta o tipo para 'entrada'
       setNovaCategoria("Alimentação"); //reseta a categoria para 'Alimentação'
       setModalAberto(false); //fecha o modal de confirmaçao
+      setNovaData(new Date().toISOString().split('T')[0]) //reseta a data para a data atual
 
     } catch (error) {
       //se o valor for igual a zero, nao entra na lista de transaçoes, entao nao tem
@@ -318,6 +325,8 @@ function App() {
           iniciarEdicao={iniciarEdicao}
           transacaoEmEdicao={transacaoEmEdicao}
           prepararNovaTransacao={prepararNovaTransacao}
+          novaData={novaData}
+          setNovaData={setNovaData}
         />
       )}
 
@@ -326,6 +335,8 @@ function App() {
         <PainelPlanejamento
           transacoes={transacoes}
           formatarDinheiro={formatarDinheiro}
+          saldoReal={resultadoSaldo}
+          
         />
       )}
 
