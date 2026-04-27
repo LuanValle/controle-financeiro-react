@@ -55,6 +55,22 @@ function App() {
   const [transacaoEmEdicao, setTransacaoEmEdicao] = useState(null); //se for null ta criando uma nova, se tiver id, editando
   const [novaData, setNovaData] = useState(new Date().toISOString().split('T')[0])
 
+
+  //funçao para mudar o tipo e garantir que a categoria faça sentido
+  function mudarTipo(tipoSelecionado){
+    setNovoTipo(tipoSelecionado);
+
+    //se mudou para entrada, define uma categoria padrao de entrada
+    if(tipoSelecionado === 'entrada'){
+      setNovaCategoria("Salário");
+    }
+
+    //se mudou para saida, define uma categoria padrao de saida
+    else{
+      setNovaCategoria("Alimentação");
+    }
+  }
+
   //calcular o saldo total
   const resultadoSaldo = transacoes.reduce(
     (acc, transacao) =>
@@ -309,7 +325,7 @@ function App() {
           novoValor={novoValor}
           setNovoValor={setNovoValor}
           novoTipo={novoTipo}
-          setNovoTipo={setNovoTipo}
+          setNovoTipo={mudarTipo}
           adicionarTransacao={adicionarTransacao}
           transacoes={transacoes}
           filtro={filtro}

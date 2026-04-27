@@ -42,9 +42,14 @@ function PainelPrincipal({
                     {novoTipo === 'entrada' ? (
                         <>
                             <option value="Salário">Salário</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Investimentos">Investimentos</option>
+                            <option value="Presente">Presente</option>
+                            <option value="Cobrancas">Cobranças</option>
                         </>
                     ) : (
                         <>
+                            <option value="estudo">Estudo</option>
                             <option value="Alimentação">Alimentação</option>
                             <option value="Transporte">Transporte</option>
                             <option value="Saúde">Saúde</option>
