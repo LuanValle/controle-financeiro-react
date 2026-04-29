@@ -1,8 +1,39 @@
 //gerente do banco de dados
 
-import {collection, addDoc, onSnapshot, query, doc, deleteDoc, where, serverTimestamp, orderBy, updateDoc} from 'firebase/firestore'
+import {collection, addDoc, onSnapshot, query, doc, deleteDoc, where, serverTimestamp, orderBy, updateDoc, setDoc, getDoc} from 'firebase/firestore'
 import { db } from '../firebase'
 import { auth } from '../firebase'
+
+//funçao para jogar a reserva no uid do usuário
+export const salvarReserva = async (uid, valorReserva)=>{
+    try{
+        const referenciaDoUsuario = doc(db, 'usuarios', uid);
+        await setDoc(referenciaDoUsuario, {
+            reserva_emergencia: valorReserva
+        }, {merge: true});
+    }catch(erro){
+        console.error("erro ao salvar ", erro);
+    }
+}
+
+
+
+    //funçao para buscar a reserva de emergencia do banco de dados
+    export async function buscarReserva(uid) {
+
+        //busca no banco de dados a referencia
+        const referenciaDoUsuario = doc(db, 'usuarios', uid);
+
+        //armazena tudo em pacote
+        const pacote = await getDoc(referenciaDoUsuario)
+
+        if(pacote.exists()){
+            return pacote.data().reserva_emergencia;
+        }
+        else{
+            return 0;
+        }
+    }
 
 //funçao para salvar a transaçao no banco de dados do firebase
 export const salvarTransacao = async (novaTransacao) =>{

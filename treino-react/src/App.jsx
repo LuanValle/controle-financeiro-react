@@ -7,12 +7,16 @@ import {
   removerTransacao,
   buscarTransacoes,
   atualizarTransacao,
+  salvarReserva,
+  buscarReserva
 } from "./services/transacaoService";
 import {auth} from './firebase'
 import { onAuthStateChanged } from "firebase/auth";
 import Login from "./components/Login";
 import { logoutUsuario } from "./services/authServices";
 import PainelPlanejamento from "./components/PainelPlanejamento";
+import PainelRelatorios from "./components/PainelRelatorios";
+
 
 const CORES = {
   sucesso: "#22c55e",
@@ -32,15 +36,7 @@ function App() {
   //useStats
   const [transacoes, setTransacoes] = useState([]);
 
-  const [reserva, setReserva] = useState(() => {
-    //criando a conta de reserva de emergencia.
-    const reservaGuardada = localStorage.getItem("reserva_emergencia"); //tentar pegar o que esta salvo no navegador com o nome 'reserva_emergencia'
-    if (reservaGuardada) {
-      return Number(reservaGuardada); //se tiver algo salvo, converte para numero e retorna o valor
-    } else {
-      return 0; //se nao tiver nada salvo, retorna zero como valor inicial da reserva
-    }
-  });
+  const [reserva, setReserva] = useState(0);
 
   const [novaDescricao, setNovaDescricao] = useState("");
   const [novoValor, setNovoValor] = useState("");
@@ -70,6 +66,8 @@ function App() {
       setNovaCategoria("Alimentação");
     }
   }
+
+
 
   //calcular o saldo total
   const resultadoSaldo = transacoes.reduce(
@@ -200,15 +198,37 @@ function App() {
     return () => desinscrever();
   }, []);
 
+  //monitorar reserva 
+  useEffect(() => {
+    async function carregarDadosIniciais() {
+      if(usuario){
+        const valorDaNuvem = await buscarReserva(usuario.uid)
+        setReserva(valorDaNuvem)
+      }
+    }
+    carregarDadosIniciais()
+  },[usuario])
+
   //funçao para guardar na reserva de emergencia, toda vez que o valor da reserva mudar, ele salva o novo valor no localstorage
   async function guardarReserva() {
     const valorDigitado = Number(valorInputReserva); //converte o valor digitado para numero
-    if (valorDigitado > 0 && valorDigitado <= resultadoSaldo) {
-      //verifica se o valor digitado é maior que zero e menor ou igual ao saldo total
-      setReserva(reserva + valorDigitado); // pega o valor atual do cofre e soma com o que foi digitado
 
-      //toda vez que guardar o valor, ele vai fazer uma transaçao de saida para o valor guardado.
-      const transacaoTranferencia = {
+    if (valorDigitado > 0 && valorDigitado <= resultadoSaldo) {
+
+      //guardando o valor antigo caso precise voltar atras.
+      const valorAntigo = reserva;
+
+      const novoValorTotal = reserva + valorDigitado;
+
+      try{
+        //atualiza a tela antes de salvar
+        setReserva(novoValorTotal);
+
+        //salva a reserva no banco de dados junto ao uid do usuario.
+        await salvarReserva(usuario.uid, novoValorTotal)
+
+        //toda vez que guardar o valor, ele vai fazer uma transaçao de saida para o valor guardado.
+        const transacaoTranferencia = {
         data: new Date().toISOString(),
         descricao: "Aporte na reserva de Emergência",
         valor: valorDigitado,
@@ -216,8 +236,15 @@ function App() {
       };
 
       await salvarTransacao(transacaoTranferencia); //adiciona a transaçao de saida do valor guardado na reserva
-
       setValorInputReserva(""); //limpa o campo de entrada da reserva
+
+      //se der errado: 
+      }catch(erro){
+        console.error("erro ao salvar, ", erro);
+        setReserva(valorAntigo)
+        alert('houve um erro ao salvar sua conexao, verifique sua conexao.')
+      }
+
     } else {
       alert(
         "Valor inválido para guardar na reserva. Verifique se o valor é positivo e não excede o saldo total.",
@@ -230,19 +257,39 @@ function App() {
   async function resgatarReserva() {
     const valorDigitado = Number(valorInputReserva); //converte o valor digitado para numero
     if (valorDigitado > 0 && valorDigitado <= reserva) {
-      setReserva(reserva - valorDigitado); // pega o valor atual do cofre e subtrai com o que foi digitado
 
-      //toda vez que resgatar o valor, ele vai fazer uma transaçao de entrada para o valor resgatado.
-      const transacaoTranferencia = {
-        descricao: "Resgate da reserva de Emergência",
-        valor: valorDigitado,
-        tipo: "entrada",
-        data: new Date().toISOString(),
-      };
+      //salvando valor antigo se der errado
+      const valorAntigo = reserva;
+      
+      // pega o valor atual do cofre e subtrai com o que foi digitado
+      const novoValorTotal = reserva - valorDigitado;
+
+      try{
+        //setar o valor antes de salvar para ser mais rapido aos olhos do user
+        setReserva(novoValorTotal);
+
+        //aqui realmente salvamos no banco de dados os valores.
+        await salvarReserva(usuario.uid, novoValorTotal);
+
+        //toda vez que resgatar o valor, ele vai fazer uma transaçao de entrada para o valor resgatado.
+        const transacaoTranferencia = {
+          descricao: "Resgate da reserva de Emergência",
+          valor: valorDigitado,
+          tipo: "entrada",
+          data: new Date().toISOString(),
+        };
 
       await salvarTransacao(transacaoTranferencia); //adiciona a transaçao de entrada do valor resgatado da reserva
 
       setValorInputReserva(""); //limpa o campo de entrada da reserva
+
+      }catch(erro){
+        console.error("erro ao salvar, ",erro)
+        setReserva(valorAntigo)
+        alert("houve um erro ao salvar, verifique sua conexao.")
+      }
+
+        
     } else {
       alert(
         "Valor inválido para resgatar da reserva. Verifique se o valor é positivo e não excede o valor disponível na reserva.",
@@ -250,11 +297,6 @@ function App() {
       setValorInputReserva(""); //limpa o campo de entrada da reserva caso o valor seja inválido
     }
   }
-
-  //sentinela da reserva de emergencia. Toda vez que a reserva mudar, ele salva o novo valor no localstorage
-  useEffect(() => {
-    localStorage.setItem("reserva_emergencia", reserva.toString()); //salva o valor da reserva no localstorage como string
-  }, [reserva]); //o useEffect é executado toda vez que o valor da reserva mudar
 
   return (
     <div className="App">
@@ -281,6 +323,8 @@ function App() {
       <div
         className="nav-menu"
       >
+
+        {/* botao para acessar a tela de controle financeiro */}
         <button
           className={
             telaAtual === "principal"
@@ -291,6 +335,10 @@ function App() {
         >
           Dia a Dia
         </button>
+
+        {/* botao para acessar a tela de relatorios financeiros */}
+        <button className={telaAtual === "relatorios" ? "btn-filtro btn-filtro-ativo" : "btn-filtro"}
+          onClick={() => setTelaAtual("relatorios")}>Relatorios</button>
 
         {/* botao para acessar a tela de planejamento financeiro */}
         <button className={telaAtual === "planejamento" ? "btn-filtro btn-filtro-ativo" : "btn-filtro"} 
@@ -343,6 +391,14 @@ function App() {
           prepararNovaTransacao={prepararNovaTransacao}
           novaData={novaData}
           setNovaData={setNovaData}
+        />
+      )}
+
+      {/*Tela de Relatórios Financeiros*/}
+      {telaAtual === "relatorios" && (
+        <PainelRelatorios
+        transacoes={transacoes}
+        formatarDinheiro={formatarDinheiro}
         />
       )}
 

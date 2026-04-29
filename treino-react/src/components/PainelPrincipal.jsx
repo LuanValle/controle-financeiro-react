@@ -105,6 +105,10 @@ function PainelPrincipal({
                             <span className="transacao-descricao">{transacao.descricao}</span>
                             <span className="transacao-valor">{formatarDinheiro(transacao.valor)}</span>
                             <span className="transacao-categoria"><strong>Categoria:</strong> {transacao.categoria || 'Sem categoria'}</span>
+                            <span>Criado em:{transacao.criadoEm 
+                                    ? transacao.criadoEm.toDate().toLocaleDateString('pt-BR')
+                                    : "Sincronizando..."
+                                    }</span>
                         </div>
                         <button className='btn-editar' onClick={() => iniciarEdicao(transacao)}>✏️</button>
                         <button className='btn-excluir' onClick={() => excluirTransacao(transacao.id)} >x</button>
