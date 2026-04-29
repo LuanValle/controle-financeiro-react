@@ -133,6 +133,10 @@ input:focus {
     transform: translateY(-1px);
 }
 
+.btn-nova-transacao {
+    margin-bottom: 14px;
+}
+
 /* Filtros */
 .painel-filtros {
     display: flex;
@@ -307,6 +311,11 @@ input:focus {
         margin: 0;
         max-width: 100%;
         border-radius: 0;
+    }
+
+    .btn-nova-transacao {
+        width: 100%;
+        margin-bottom: 16px;
     }
 
     .nav-menu {

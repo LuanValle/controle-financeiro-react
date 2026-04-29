@@ -16,7 +16,7 @@ function PainelPrincipal({
 }) {
     return (
         <div>
-            <button className='btn-adicionar' onClick={() => prepararNovaTransacao()}>Nova transação</button>
+            <button className='btn-adicionar btn-nova-transacao' onClick={() => prepararNovaTransacao()}>Nova transação</button>
 
             {modalAberto && (
             <div className="modal-overlay" onClick={() => setModalAberto(false)}>

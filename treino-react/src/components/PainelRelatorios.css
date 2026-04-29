@@ -21,7 +21,7 @@
 .resumo-categoria {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     padding: 12px;
     border: 1px solid var(--border);
@@ -74,6 +74,28 @@
     white-space: nowrap;
 }
 
+.info-resumo-esquerda,
+.resumo-info-esquerda {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.info-resumo-direita {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.resumo-porcetagem {
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    opacity: 0.85;
+    font-weight: 500;
+}
+
 @media (max-width: 600px) {
     .painel-relatorios {
         padding: 12px;
@@ -90,5 +112,9 @@
     .resumo-nome,
     .resumo-valor {
         font-size: 0.9rem;
+    }
+
+    .resumo-porcetagem {
+        font-size: 0.8rem;
     }
 }

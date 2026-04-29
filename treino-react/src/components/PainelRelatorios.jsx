@@ -8,10 +8,10 @@ function PainelRelatorios({
 {
     //funçao para calcular o total gasto em uma categoria, recebe o nome da categoria e retorna o total gasto nessa categoria
     function calcularTotalPorCategoria(categoria){
-    return transacoes
-    .filter(t => t.categoria === categoria)
-    .reduce((acumulador, t) => acumulador + t.valor, 0)
-    }
+        return transacoes
+        .filter(t => t.categoria === categoria && t.tipo === 'saida')
+        .reduce((acumulador, t) => acumulador + t.valor, 0)
+        }
 
     //cria uma lista de categorias unicas a partir das transaçoes, usando o set para garantir que sejam unicas e o filter para remover categorias vazias ou nulas
     const categoriasUnicas = [...new Set(
@@ -32,10 +32,22 @@ function PainelRelatorios({
             <div className="lista-resumo">
             {categoriasUnicas.map(categoria => {
                 const total = calcularTotalPorCategoria(categoria);
+
+                //cacular a porcentagem dos produtos baseado no valor total
+                const porcentagem = totalGeralSaidas > 0
+                    ? ((total / totalGeralSaidas) * 100).toFixed(1)
+                    : 0;
+
+
                 return (
                     <div key={categoria} className="resumo-categoria">
-                        <span className="resumo-nome">{categoria}</span>
-                        <span className="resumo-valor">{formatarDinheiro(total)}</span>
+                        <div className="info-resumo-esquerda">
+                            <span className="resumo-nome">{categoria}</span>
+                        </div>
+                        <div className="info-resumo-direita">
+                            <span className="resumo-valor">{formatarDinheiro(total)}</span>
+                            <span className="resumo-porcetagem">{porcentagem}%</span>
+                        </div>
                     </div>
                 )
             })}
