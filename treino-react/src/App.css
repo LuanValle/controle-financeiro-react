@@ -18,6 +18,7 @@ body {
     background-color: var(--bg);
     margin: 0;
     color: var(--text-main);
+    font-family: 'Inter', sans-serif;
 }
 
 .App {
@@ -197,7 +198,8 @@ input:focus {
 }
 
 .transacao-item:hover {
-    transform: scale(1.02);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.15);
 }
 
 .transacao-entrada { border-left-color: var(--success); }
@@ -219,30 +221,83 @@ input:focus {
 }
 
 .transacao-valor {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.transacao-valor-entrada {
+    color: var(--success);
+}
+
+.transacao-valor-saida {
+    color: var(--danger);
+}
+
+.transacao-categoria {
+    font-size: 0.8rem;
     color: var(--text-sub);
+    background-color: #f3f4f6;
+    border-radius: 99px;
+    padding: 2px 8px;
+    width: fit-content;
+    margin-top: 2px;
+}
+
+.transacao-data {
+    font-size: 0.78rem;
+    color: var(--text-sub);
+    margin-top: 2px;
+}
+
+.transacao-acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 6px;
+}
+
+.btn-editar,
+.btn-excluir {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-size: 0.95rem;
+    line-height: 1;
+    transition: 0.2s;
+}
+
+.btn-editar {
+    background-color: #eff6ff;
+    color: var(--primary-dark);
+}
+
+.btn-editar:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
 }
 
 .btn-excluir {
     background-color: #fee2e2;
     color: var(--danger);
-    border: none;
-    border-radius: 6px;
-    padding: 8px;
-    cursor: pointer;
-    transition: 0.2s;
 }
 
 .btn-excluir:hover {
     background-color: var(--danger);
     color: var(--white);
+    border-color: var(--danger);
 }
 
 .nav-menu {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 25px;
 }
 
@@ -289,6 +344,13 @@ input:focus {
     text-align: left;
 }
 
+.modal-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-bottom: -4px;
+}
+
 .modal-content input,
 .modal-content select {
     width: 100%;
@@ -319,17 +381,21 @@ input:focus {
     }
 
     .nav-menu {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .nav-menu .btn-filtro {
         min-height: 44px;
     }
-}
 
-.App {
-    max-width: 900px; /* Aumentamos de 500px para 900px para caber tudo */
-    margin: 40px auto;
-    padding: 24px;
-    /* ... resto do seu código ... */
+    .transacao-acoes {
+        gap: 6px;
+        margin-left: 2px;
+    }
+
+    .btn-editar,
+    .btn-excluir {
+        width: 34px;
+        height: 34px;
+    }
 }

@@ -27,7 +27,7 @@ function PainelPrincipal({
                 <input type="text" placeholder='Descrição' className='campo-entrada' value={novaDescricao} onChange={(evento) => setNovaDescricao(evento.target.value)} />
 
                 {/* Campo de data */}
-                <label>Data da Transação</label>
+                <label className="modal-label">Data da Transação</label>
                 <input type="date" value={novaData} onChange={(e) => setNovaData(e.target.value)} className="input-custom"/>
 
                 {/* Campo de tipo */}
@@ -103,15 +103,17 @@ function PainelPrincipal({
                         {/*area que mostra as informaçoes da transaçao */}
                         <div className="transacao-info">
                             <span className="transacao-descricao">{transacao.descricao}</span>
-                            <span className="transacao-valor">{formatarDinheiro(transacao.valor)}</span>
-                            <span className="transacao-categoria"><strong>Categoria:</strong> {transacao.categoria || 'Sem categoria'}</span>
-                            <span>Criado em:{transacao.criadoEm 
+                            <span className={transacao.tipo === 'entrada' ? 'transacao-valor transacao-valor-entrada' : 'transacao-valor transacao-valor-saida'}>{formatarDinheiro(transacao.valor)}</span>
+                            <span className="transacao-categoria">{transacao.categoria || 'Sem categoria'}</span>
+                            <span className="transacao-data">📅 {transacao.criadoEm 
                                     ? transacao.criadoEm.toDate().toLocaleDateString('pt-BR')
                                     : "Sincronizando..."
                                     }</span>
                         </div>
-                        <button className='btn-editar' onClick={() => iniciarEdicao(transacao)}>✏️</button>
-                        <button className='btn-excluir' onClick={() => excluirTransacao(transacao.id)} >x</button>
+                        <div className="transacao-acoes">
+                            <button type="button" className="btn-editar" onClick={() => iniciarEdicao(transacao)} aria-label="Editar transacao">✏️</button>
+                            <button type="button" className="btn-excluir" onClick={() => excluirTransacao(transacao.id)} aria-label="Excluir transacao">✕</button>
+                        </div>
                     </li>
                 ))}
             </ul>
