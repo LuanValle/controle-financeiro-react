@@ -43,7 +43,7 @@ function App() {
   const [carregando, setCarregando] = useState(false); //mostrar tela de loading na tela enquanto nao carregou os dados.
   const [usuario, setUsuario] = useState(null); //variavel para armazenar as informaçoes do usuário logado, ou null se nao tiver nenhum usuário logado
   const [modalAberto, setModalAberto] = useState(false); //controla quando abrimos ou fechamos o modal de confirmaçao
-  const [novaCategoria, setNovaCategoria] = useState("Alimentação"); //controla o valor do campo de categoria
+  const [novaCategoria, setNovaCategoria] = useState("salario"); //controla o valor do campo de categoria
   const [transacaoEmEdicao, setTransacaoEmEdicao] = useState(null); //se for null ta criando uma nova, se tiver id, editando
   const [novaData, setNovaData] = useState(new Date().toISOString().split('T')[0])
 
@@ -141,7 +141,7 @@ function App() {
   //funçao para limpar o modal quando for abrir novatransacao
   function prepararNovaTransacao(){
     setNovaDescricao("");
-    setNovaCategoria("Alimentação");
+    setNovaCategoria("salario");
     setNovoValor("");
     setNovoTipo("entrada");
     setTransacaoEmEdicao(null);
