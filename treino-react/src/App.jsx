@@ -16,20 +16,16 @@ import Login from "./components/Login";
 import { logoutUsuario } from "./services/authServices";
 import PainelPlanejamento from "./components/PainelPlanejamento";
 import PainelRelatorios from "./components/PainelRelatorios";
+import { formatarDinheiro } from "./utils/formatarDinheiro";
+import { calcularSaldo } from "./utils/calcularSaldo";
+import { filtrarTransacoes } from "./utils/filtrarTransacoes";
+import { criarDadosData } from "./utils/criarDadosData";
 
 
 const CORES = {
   sucesso: "#22c55e",
   erro: "#ef4444",
 };
-
-//funçao para transformar numeros puro em Reais(R$)
-function formatarDinheiro(valor) {
-  return Number(valor).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
 
 function App() {
 
@@ -70,26 +66,13 @@ function App() {
 
 
   //calcular o saldo total
-  const resultadoSaldo = transacoes.reduce(
-    (acc, transacao) =>
-      transacao.tipo === "entrada"
-        ? acc + transacao.valor
-        : acc - transacao.valor,
-    0,
-  );
-  //se for entrada, soma o valor, se for saida, subtrai o valor, o zero é o valor inicial do acumulador
+  const resultadoSaldo = calcularSaldo(transacoes);
 
   //cor inteligente para o resultado do saldo, for + verde, for - vermelho
   const corSaldo = resultadoSaldo >= 0 ? CORES.sucesso : CORES.erro;
 
   //filtro para mostrar somente as transaçoes de entrada, ou somente as de saida, ou todas as transaçoes
-  const transacoesFiltradas = transacoes.filter((transacao) => {
-    if (filtro === "todos") {
-      return true; //mostra todas as transaçoes
-    } else {
-      return transacao.tipo === filtro; //mostra somente as transaçoes do tipo selecionado no filtro
-    }
-  });
+  const transacoesFiltradas = filtrarTransacoes(transacoes, filtro);
 
   //funçao para adicionar valores
   async function adicionarTransacao() {
@@ -100,12 +83,10 @@ function App() {
     const dataObjeto = new Date(novaData);
     dataObjeto.setMinutes(dataObjeto.getMinutes() + dataObjeto.getTimezoneOffset());
 
+    const dadosData = criarDadosData(dataObjeto);
+
     const novaTransacao = {
-      //caixa da nova transaçao
-      data: dataObjeto.toISOString(), //boa pratica, salvar data
-      dia: dataObjeto.getDate(), //pega o dia do mes para usar no planejamento financeiro
-      mes: dataObjeto.getUTCMonth() + 1, //pega o mes para usar no planejamento financeiro
-      ano: dataObjeto.getFullYear(), //pega o ano para usar no planejamento financeiro
+      ...dadosData,
       descricao: novaDescricao,
       categoria: novaCategoria,
       valor: Number(novoValor), //garante que o valor seja um numero
@@ -227,10 +208,13 @@ function App() {
         //salva a reserva no banco de dados junto ao uid do usuario.
         await salvarReserva(usuario.uid, novoValorTotal)
 
+        const dataObjeto = new Date();
+        const dadosData = criarDadosData(dataObjeto);
         //toda vez que guardar o valor, ele vai fazer uma transaçao de saida para o valor guardado.
         const transacaoTranferencia = {
-        data: new Date().toISOString(),
+        ...dadosData,
         descricao: "Aporte na reserva de Emergência",
+        categoria: "Reserva",
         valor: valorDigitado,
         tipo: "saida",
       };
@@ -271,12 +255,15 @@ function App() {
         //aqui realmente salvamos no banco de dados os valores.
         await salvarReserva(usuario.uid, novoValorTotal);
 
+        const dataObjeto = new Date();
+        const dadosData = criarDadosData(dataObjeto);
         //toda vez que resgatar o valor, ele vai fazer uma transaçao de entrada para o valor resgatado.
         const transacaoTranferencia = {
+          ...dadosData,
+          categoria: "Reserva",
           descricao: "Resgate da reserva de Emergência",
           valor: valorDigitado,
           tipo: "entrada",
-          data: new Date().toISOString(),
         };
 
       await salvarTransacao(transacaoTranferencia); //adiciona a transaçao de entrada do valor resgatado da reserva
