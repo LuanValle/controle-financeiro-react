@@ -22,9 +22,10 @@ body {
 }
 
 .App {
-    max-width: 500px; /* Um pouco mais estreito fica mais elegante em telas grandes */
-    margin: 40px auto;
-    padding: 24px;
+    width: min(94vw, 1080px);
+    max-width: 1080px;
+    margin: clamp(16px, 4vw, 40px) auto;
+    padding: clamp(16px, 2.5vw, 28px);
     font-family: 'Inter', sans-serif;
     background-color: var(--white);
     border-radius: 16px;
@@ -297,18 +298,26 @@ input:focus {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: stretch;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 25px;
 }
 
 .nav-menu .btn-filtro {
     width: 100%;
-    min-height: 40px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.2;
+    padding: 8px 12px;
+}
+
+@media (max-width: 1024px) {
+    .nav-menu {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* Fundo escuro que centraliza o conteúdo */
