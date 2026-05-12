@@ -20,6 +20,7 @@ import { formatarDinheiro } from "./utils/formatarDinheiro";
 import { calcularSaldo } from "./utils/calcularSaldo";
 import { filtrarTransacoes } from "./utils/filtrarTransacoes";
 import { criarDadosData } from "./utils/criarDadosData";
+import { obterCategoriaPadrao } from "./utils/obterCategoriaPadrao";
 
 
 const CORES = {
@@ -43,7 +44,7 @@ function App() {
   const [carregando, setCarregando] = useState(false); //mostrar tela de loading na tela enquanto nao carregou os dados.
   const [usuario, setUsuario] = useState(null); //variavel para armazenar as informaçoes do usuário logado, ou null se nao tiver nenhum usuário logado
   const [modalAberto, setModalAberto] = useState(false); //controla quando abrimos ou fechamos o modal de confirmaçao
-  const [novaCategoria, setNovaCategoria] = useState("salario"); //controla o valor do campo de categoria
+  const [novaCategoria, setNovaCategoria] = useState(obterCategoriaPadrao("entrada")); //controla o valor do campo de categoria
   const [transacaoEmEdicao, setTransacaoEmEdicao] = useState(null); //se for null ta criando uma nova, se tiver id, editando
   const [novaData, setNovaData] = useState(new Date().toISOString().split('T')[0])
 
@@ -52,15 +53,9 @@ function App() {
   function mudarTipo(tipoSelecionado){
     setNovoTipo(tipoSelecionado);
 
-    //se mudou para entrada, define uma categoria padrao de entrada
-    if(tipoSelecionado === 'entrada'){
-      setNovaCategoria("Salário");
-    }
-
-    //se mudou para saida, define uma categoria padrao de saida
-    else{
-      setNovaCategoria("Alimentação");
-    }
+    //altera a categoria padrao.
+    const categoriaPadrao = obterCategoriaPadrao(tipoSelecionado);
+    setNovaCategoria(categoriaPadrao);
   }
 
 
