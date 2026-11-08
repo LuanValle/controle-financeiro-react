@@ -1,190 +1,99 @@
 # Controle Financeiro React
 
-Aplicativo web de controle financeiro pessoal desenvolvido com **React** e **Firebase**.
+Aplicativo de estudo e portfólio para controle financeiro pessoal, desenvolvido com **React, JavaScript e Firebase**. Reúne autenticação, movimentações financeiras e consultas ao Firestore em uma interface web.
 
-O sistema permite que o usuário cadastre entradas e saídas, edite e exclua transações, acompanhe o saldo total, filtre movimentações, visualize relatórios por categoria, gerencie uma reserva de emergência e acompanhe seu planejamento financeiro.
+## Demonstração
 
-## Deploy
+[Abrir a interface publicada](https://controle-financeiro-react-two.vercel.app)
 
-Acesse o projeto online:
+O link permite acessar a interface de demonstração. Sua disponibilidade não comprova o funcionamento de todos os fluxos autenticados nem a configuração das regras de segurança do Firestore.
 
-[Controle Financeiro React](COLE_AQUI_O_LINK_DA_VERCEL)
+## Minha contribuição
 
-## Tecnologias utilizadas
+Desenvolvi o projeto manualmente como prática de React e integração com Firebase, utilizando o Gemini como tutor e apoio ao aprendizado. O trabalho envolve componentes de interface, gerenciamento de estado, autenticação e operações de persistência. As limitações abaixo fazem parte dos próximos passos de evolução do projeto.
 
-- React
-- Vite
-- JavaScript
-- CSS
-- Firebase Authentication
-- Cloud Firestore
-- Vercel
-- ESLint
+## O que está implementado
 
-## Funcionalidades
+- Cadastro, login e logout com e-mail e senha pelo Firebase Authentication.
+- Cadastro, edição e exclusão de entradas e saídas.
+- Consulta de movimentações do usuário autenticado com atualização via `onSnapshot`.
+- Cálculo de saldo e filtros de movimentações.
+- Relatório de despesas agrupadas por categoria.
+- Cadastro de reserva financeira e movimentação entre reserva e saldo.
+- Painel de planejamento com navegação entre meses.
 
-- Cadastro e login de usuários
-- Registro de transações financeiras
-- Cadastro de entradas e saídas
-- Edição de transações
-- Exclusão de transações
-- Filtro de transações por tipo
-- Cálculo automático do saldo total
-- Relatório de gastos por categoria
-- Cálculo percentual de gastos por categoria
-- Gerenciamento de reserva de emergência
-- Planejamento financeiro
-- Proteção dos dados por usuário autenticado
+Esses recursos estão presentes no código. Isso não equivale a uma certificação de segurança nem a testes completos em produção. Veja as limitações abaixo.
 
-## Conceitos praticados
+## Tecnologias
 
-Durante o desenvolvimento deste projeto, pratiquei conceitos importantes de React, como criação de componentes, uso de estados com `useState`, comunicação entre componentes por meio de props e organização da aplicação em partes menores.
+| Camada | Tecnologia |
+| --- | --- |
+| Interface | React 19, JavaScript e CSS |
+| Desenvolvimento e build | Vite 8 |
+| Autenticação | Firebase Authentication |
+| Persistência | Cloud Firestore |
+| Análise estática | ESLint 9 |
 
-Também pratiquei operações de CRUD com o Cloud Firestore, implementando cadastro, listagem, edição e exclusão de transações financeiras. Além disso, integrei autenticação com Firebase Authentication, relacionei os dados ao usuário logado e configurei regras de segurança no Firestore para proteger as informações de cada usuário.
+As versões exatas instaladas são registradas em [package-lock.json](treino-react/package-lock.json). O projeto utiliza os SDKs do Firebase no cliente; não possui servidor Node.js próprio nesta árvore.
 
-Outro ponto importante foi a organização do código. Algumas regras e funções auxiliares foram separadas em arquivos próprios dentro da pasta `utils`, facilitando a leitura, manutenção e evolução do projeto.
+## Organização
 
-## Estrutura do projeto
+O aplicativo está na pasta `treino-react/`.
 
-```txt
-src/
-├── components/
-├── services/
-├── utils/
-│   ├── calcularSaldo.js
-│   ├── criarDadosData.js
-│   ├── filtrarTransacoes.js
-│   ├── formatarDinheiro.js
-│   └── obterCategoriaPadrao.js
-├── App.jsx
-├── firebase.js
-└── main.jsx
-```
+- [App.jsx](treino-react/src/App.jsx): estado da aplicação, sessão e integração dos painéis.
+- [components](treino-react/src/components): login e painéis principal, de relatórios, reserva e planejamento.
+- [authServices.jsx](treino-react/src/services/authServices.jsx): operações de autenticação.
+- [transacaoService.jsx](treino-react/src/services/transacaoService.jsx): operações de transações e reserva no Firestore.
+- [utils](treino-react/src/utils): cálculo de saldo, filtros, datas, categorias e formatação monetária.
 
-## Organização das funções utilitárias
+## Executar localmente
 
-Algumas regras e operações auxiliares foram separadas em arquivos próprios para reduzir responsabilidades dentro do `App.jsx`.
-
-Exemplos:
-
-- `formatarDinheiro`: formata valores para moeda brasileira.
-- `calcularSaldo`: calcula o saldo total com base nas entradas e saídas.
-- `filtrarTransacoes`: filtra transações por tipo.
-- `criarDadosData`: cria os campos de data, dia, mês e ano para uma transação.
-- `obterCategoriaPadrao`: define a categoria inicial conforme o tipo da transação.
-
-## Segurança
-
-O projeto utiliza Firebase Authentication para autenticação de usuários e Cloud Firestore para persistência dos dados.
-
-As regras de segurança do Firestore foram configuradas para que cada usuário autenticado acesse apenas seus próprios dados.
-
-Lógica aplicada:
-
-```txt
-Usuário logado → acessa apenas suas próprias transações
-Usuário deslogado → não acessa os dados
-Reserva de emergência → vinculada ao documento do próprio usuário
-```
-
-## Variáveis de ambiente
-
-O projeto utiliza variáveis de ambiente para armazenar as configurações do Firebase.
-
-Crie um arquivo `.env` na raiz da pasta `treino-react`, com base no arquivo `.env.example`.
-
-Exemplo:
-
-```env
-VITE_FIREBASE_API_KEY=sua_api_key_aqui
-VITE_FIREBASE_AUTH_DOMAIN=seu_auth_domain_aqui
-VITE_FIREBASE_PROJECT_ID=seu_project_id_aqui
-VITE_FIREBASE_STORAGE_BUCKET=seu_storage_bucket_aqui
-VITE_FIREBASE_MESSAGING_SENDER_ID=seu_messaging_sender_id_aqui
-VITE_FIREBASE_APP_ID=seu_app_id_aqui
-```
-
-Observação: o arquivo `.env` não deve ser enviado para o GitHub.
-
-## Como executar o projeto
-
-### Pré-requisitos
-
-Antes de começar, é necessário ter instalado:
-
-- Node.js
-- npm
-
-### Passos
-
-Clone o repositório:
+Pré-requisitos: Git, npm, uma versão de Node.js compatível com o Vite utilizado e um projeto Firebase configurado para desenvolvimento.
 
 ```bash
 git clone https://github.com/LuanValle/controle-financeiro-react.git
-```
-
-Acesse a pasta do projeto:
-
-```bash
 cd controle-financeiro-react/treino-react
+npm ci
 ```
 
-Instale as dependências:
+Configure localmente as variáveis indicadas no arquivo `.env.example`, utilizando seu próprio projeto Firebase. Habilite a autenticação por e-mail e senha e configure o Firestore. Se uma consulta solicitar índice composto, crie o índice correspondente no projeto de desenvolvimento.
 
-```bash
-npm install
-```
-
-Execute o projeto em modo de desenvolvimento:
+Não inclua senhas, contas de serviço, chaves privadas ou credenciais administrativas no front-end nem no repositório. Variáveis com prefixo `VITE_` são incorporadas ao aplicativo entregue ao navegador e não devem ser tratadas como segredos.
 
 ```bash
 npm run dev
 ```
 
-Depois, abra no navegador o endereço exibido no terminal.
-
-## Scripts disponíveis
-
-Dentro da pasta `treino-react`, você pode executar:
-
-```bash
-npm run dev
-```
-
-Executa o projeto em modo de desenvolvimento.
-
-```bash
-npm run build
-```
-
-Gera a versão de produção do projeto.
-
-```bash
-npm run preview
-```
-
-Executa localmente uma prévia da versão de produção.
+### Scripts disponíveis
 
 ```bash
 npm run lint
+npm run build
+npm run preview
 ```
 
-Executa a verificação de padrões do código com ESLint.
+`preview` serve o build localmente. Não substitui a configuração de hospedagem. Não há script de testes automatizados configurado no `package.json` atual.
 
-## Status do projeto
+## Segurança e dados
 
-Projeto em desenvolvimento e melhoria contínua.
+A consulta de transações utiliza o identificador do usuário autenticado. **Filtrar dados no cliente não garante autorização de acesso.** Leituras e escritas precisam ser protegidas pelas regras do Firestore, inclusive atualizações e exclusões por identificador.
 
-Melhorias planejadas:
+As regras do Firestore e seus testes não estão versionados nesta árvore. Portanto, este repositório, sozinho, não permite verificar o isolamento entre contas no ambiente publicado. Use um projeto de desenvolvimento e dados fictícios até validar as regras e os fluxos.
 
-- Adicionar prints do sistema ao README
-- Melhorar validações dos formulários
-- Substituir `alert()` por mensagens visuais na interface
-- Criar testes para funções utilitárias
-- Melhorar organização interna com hooks customizados
-- Implementar navegação por mês nos relatórios
-- Melhorar responsividade e experiência do usuário
+## Limitações conhecidas e próximos passos
+
+- Preservar a data original ao editar uma transação: o preenchimento do formulário de edição ainda precisa contemplar esse campo.
+- Ajustar o planejamento à quantidade real de dias de cada mês; o cálculo atual usa 30 dias.
+- Tornar a movimentação de reserva consistente: a atualização da reserva e o registro da transação são operações separadas.
+- Propagar falhas ao salvar a reserva, para evitar indicar sucesso após um erro.
+- Limpar dados de interface na troca de sessão e testar o isolamento entre contas.
+- Adicionar testes de utilitários, operações financeiras e regras do Firestore.
+- Adicionar filtro mensal aos relatórios por categoria.
+- Validar os fluxos autenticados e as regras de acesso no ambiente de demonstração.
 
 ## Autor
 
-Desenvolvido por **Luan Valle**.
+[Luan Valle](https://github.com/LuanValle)
+
+Projeto em evolução. As funcionalidades descritas devem ser avaliadas junto com as limitações e com o código da versão consultada.
+
