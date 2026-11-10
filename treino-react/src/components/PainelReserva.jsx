@@ -1,6 +1,5 @@
 function PainelReserva({
     reserva,
-    setReserva,
     valorInputReserva,
     setValorInputReserva,
     guardarReserva,

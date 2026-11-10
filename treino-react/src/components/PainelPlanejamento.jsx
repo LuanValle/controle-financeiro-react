@@ -37,11 +37,9 @@ export default function PainelPlanejamento({
     const orcamento = saldoReal;
 
     const diasDoMes = Array.from({ length: 30 }, (_, index) => index + 1)
-    const orcamentoDiario = orcamento / 30;
 
     //pega a data atual para destacar o dia atual na tabela
     const hoje = new Date();
-    const diaHoje = hoje.getDate();
     const mesHoje = hoje.getMonth() + 1;
     const anoHoje = hoje.getFullYear();
 
@@ -143,4 +141,4 @@ export default function PainelPlanejamento({
         </section>
 
     )
-} 
+}
