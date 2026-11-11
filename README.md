@@ -68,11 +68,20 @@ npm run dev
 
 ```bash
 npm run lint
+npm test
 npm run build
 npm run preview
 ```
 
-`preview` serve o build localmente. Não substitui a configuração de hospedagem. Não há script de testes automatizados configurado no `package.json` atual.
+`preview` serve o build localmente. Não substitui a configuração de hospedagem.
+
+### Testes de utilitários
+
+Execute `npm test` na pasta `treino-react/`. Os testes usam `node:test`, incluído no Node.js, e não precisam de dependências instaladas, variáveis de ambiente, conexão com Firebase ou dados reais.
+
+A suíte inicial verifica cálculo de saldo e filtros por tipo com dados fictícios: listas vazias, entradas, saídas, saldo negativo, valores zero, um cenário com centavos, ordem dos resultados e preservação da lista original. Ela não cobre interface, autenticação, Firestore, validação de entradas inválidas nem garante precisão monetária para todos os números decimais de JavaScript.
+
+Esta suíte foi implementada com IA como melhoria do portfólio. Os testes são evidência do comportamento verificado, não comprovação de domínio pessoal. Exercício sugerido: adicione um caso em que entradas e saídas se anulem e explique por que o saldo esperado é zero.
 
 ## Segurança e dados
 
@@ -87,7 +96,7 @@ As regras do Firestore e seus testes não estão versionados nesta árvore. Port
 - Tornar a movimentação de reserva consistente: a atualização da reserva e o registro da transação são operações separadas.
 - Propagar falhas ao salvar a reserva, para evitar indicar sucesso após um erro.
 - Limpar dados de interface na troca de sessão e testar o isolamento entre contas.
-- Adicionar testes de utilitários, operações financeiras e regras do Firestore.
+- Ampliar os testes para os demais utilitários, operações financeiras e regras do Firestore.
 - Adicionar filtro mensal aos relatórios por categoria.
 - Validar os fluxos autenticados e as regras de acesso no ambiente de demonstração.
 
