@@ -81,6 +81,10 @@ Execute `npm test` na pasta `treino-react/`. Os testes usam `node:test`, incluí
 
 A suíte inicial verifica cálculo de saldo e filtros por tipo com dados fictícios: listas vazias, entradas, saídas, saldo negativo, valores zero, um cenário com centavos, ordem dos resultados e preservação da lista original. Ela não cobre interface, autenticação, Firestore, validação de entradas inválidas nem garante precisão monetária para todos os números decimais de JavaScript.
 
+A evolução de 12/11/2026 acrescenta sete testes de datas, totalizando 21 testes: meses de 1 a 12, ano bissexto, preservação do objeto recebido, erro para data inválida e a virada do ano nos fusos UTC e America/Manaus. Os dois casos de fuso rodam em processos isolados, sem alterar o fuso dos outros testes. O comportamento atual guarda o instante ISO em UTC e os campos dia/mês/ano no calendário local: às 02:30 UTC de 1º de janeiro ainda é 31 de dezembro em Manaus. Isso não valida como a interface ou o Firestore usam esses campos.
+
+Exercício de datas: antes de rodar os testes, preveja o dia, mês e ano de `2026-01-01T02:30:00.000Z` em Manaus. Explique por que o texto ISO permanece igual nos dois fusos.
+
 Esta suíte foi implementada com IA como melhoria do portfólio. Os testes são evidência do comportamento verificado, não comprovação de domínio pessoal. Exercício sugerido: adicione um caso em que entradas e saídas se anulem e explique por que o saldo esperado é zero.
 
 ## Segurança e dados
