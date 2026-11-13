@@ -83,6 +83,10 @@ A suíte inicial verifica cálculo de saldo e filtros por tipo com dados fictíc
 
 A evolução de 12/11/2026 acrescenta sete testes de datas, totalizando 21 testes: meses de 1 a 12, ano bissexto, preservação do objeto recebido, erro para data inválida e a virada do ano nos fusos UTC e America/Manaus. Os dois casos de fuso rodam em processos isolados, sem alterar o fuso dos outros testes. O comportamento atual guarda o instante ISO em UTC e os campos dia/mês/ano no calendário local: às 02:30 UTC de 1º de janeiro ainda é 31 de dezembro em Manaus. Isso não valida como a interface ou o Firestore usam esses campos.
 
+A evolução de 13/11/2026 acrescenta 11 testes de formatação BRL e categoria padrão, totalizando 32. Verifica zero, centavos, milhares, negativos, duas casas decimais e texto numérico com ponto. A comparação inclui o espaço inquebrável (`\u00a0`) entre `R$` e o valor. Arredondar a apresentação não corrige a precisão do cálculo financeiro. Os testes também documentam limites existentes: texto com vírgula (`"12,34"`) produz `R$ NaN`, e tipos desconhecidos recebem `Alimentação`; esses helpers não validam entradas. Não são comportamentos recomendados para um formulário, nem validação de dados do usuário.
+
+Exercício de formatação: preveja a saída para `1234.5` e compare com `"1234,5"`. Explique a diferença entre formatar (mudar a apresentação) e validar (aceitar ou rejeitar uma entrada).
+
 Exercício de datas: antes de rodar os testes, preveja o dia, mês e ano de `2026-01-01T02:30:00.000Z` em Manaus. Explique por que o texto ISO permanece igual nos dois fusos.
 
 Esta suíte foi implementada com IA como melhoria do portfólio. Os testes são evidência do comportamento verificado, não comprovação de domínio pessoal. Exercício sugerido: adicione um caso em que entradas e saídas se anulem e explique por que o saldo esperado é zero.
