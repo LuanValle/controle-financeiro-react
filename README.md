@@ -68,11 +68,28 @@ npm run dev
 
 ```bash
 npm run lint
+npm test
 npm run build
 npm run preview
 ```
 
-`preview` serve o build localmente. Não substitui a configuração de hospedagem. Não há script de testes automatizados configurado no `package.json` atual.
+`preview` serve o build localmente. Não substitui a configuração de hospedagem.
+
+### Testes de utilitários
+
+Execute `npm test` na pasta `treino-react/`. Os testes usam `node:test`, incluído no Node.js, e não precisam de dependências instaladas, variáveis de ambiente, conexão com Firebase ou dados reais.
+
+A suíte inicial verifica cálculo de saldo e filtros por tipo com dados fictícios: listas vazias, entradas, saídas, saldo negativo, valores zero, um cenário com centavos, ordem dos resultados e preservação da lista original. Ela não cobre interface, autenticação, Firestore, validação de entradas inválidas nem garante precisão monetária para todos os números decimais de JavaScript.
+
+A evolução de 12/11/2026 acrescenta sete testes de datas, totalizando 21 testes: meses de 1 a 12, ano bissexto, preservação do objeto recebido, erro para data inválida e a virada do ano nos fusos UTC e America/Manaus. Os dois casos de fuso rodam em processos isolados, sem alterar o fuso dos outros testes. O comportamento atual guarda o instante ISO em UTC e os campos dia/mês/ano no calendário local: às 02:30 UTC de 1º de janeiro ainda é 31 de dezembro em Manaus. Isso não valida como a interface ou o Firestore usam esses campos.
+
+A evolução de 13/11/2026 acrescenta 11 testes de formatação BRL e categoria padrão, totalizando 32. Verifica zero, centavos, milhares, negativos, duas casas decimais e texto numérico com ponto. A comparação inclui o espaço inquebrável (`\u00a0`) entre `R$` e o valor. Arredondar a apresentação não corrige a precisão do cálculo financeiro. Os testes também documentam limites existentes: texto com vírgula (`"12,34"`) produz `R$ NaN`, e tipos desconhecidos recebem `Alimentação`; esses helpers não validam entradas. Não são comportamentos recomendados para um formulário, nem validação de dados do usuário.
+
+Exercício de formatação: preveja a saída para `1234.5` e compare com `"1234,5"`. Explique a diferença entre formatar (mudar a apresentação) e validar (aceitar ou rejeitar uma entrada).
+
+Exercício de datas: antes de rodar os testes, preveja o dia, mês e ano de `2026-01-01T02:30:00.000Z` em Manaus. Explique por que o texto ISO permanece igual nos dois fusos.
+
+Esta suíte foi implementada com IA como melhoria do portfólio. Os testes são evidência do comportamento verificado, não comprovação de domínio pessoal. Exercício sugerido: adicione um caso em que entradas e saídas se anulem e explique por que o saldo esperado é zero.
 
 ## Segurança e dados
 
@@ -87,7 +104,7 @@ As regras do Firestore e seus testes não estão versionados nesta árvore. Port
 - Tornar a movimentação de reserva consistente: a atualização da reserva e o registro da transação são operações separadas.
 - Propagar falhas ao salvar a reserva, para evitar indicar sucesso após um erro.
 - Limpar dados de interface na troca de sessão e testar o isolamento entre contas.
-- Adicionar testes de utilitários, operações financeiras e regras do Firestore.
+- Ampliar os testes para os demais utilitários, operações financeiras e regras do Firestore.
 - Adicionar filtro mensal aos relatórios por categoria.
 - Validar os fluxos autenticados e as regras de acesso no ambiente de demonstração.
 
