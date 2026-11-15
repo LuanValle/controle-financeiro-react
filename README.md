@@ -48,6 +48,27 @@ O aplicativo está na pasta `treino-react/`.
 
 ## Executar localmente
 
+### Estudar os testes sem configurar Firebase
+
+Para estudar somente as funções de cálculo, filtro, data e formatação, você não precisa criar conta, preencher `.env` ou instalar as dependências da interface. Com o código desta branch já disponível e Node.js 24:
+
+```bash
+cd treino-react
+npm test
+```
+
+Resultado esperado nesta versão: **35 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+
+```bash
+node --test src/utils/composicaoSaldo.test.js
+```
+
+Esse comando executa três testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
+
+Um teste aprovado significa apenas que aquele cenário produziu o resultado esperado. Não comprova funcionamento da interface, login, permissões do Firestore ou precisão monetária para todos os decimais. Para executar a aplicação completa, siga a configuração abaixo.
+
+Exercício opcional: no arquivo `composicaoSaldo.test.js`, identifique as entradas de 120 e 30 e as saídas de 45 e 15. Antes de executar, explique por que o saldo geral esperado é 90. Material de estudo preparado com IA; não comprova domínio pessoal.
+
 Pré-requisitos: Git, npm, uma versão de Node.js compatível com o Vite utilizado e um projeto Firebase configurado para desenvolvimento.
 
 ```bash
