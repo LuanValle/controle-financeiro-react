@@ -57,13 +57,13 @@ cd treino-react
 npm test
 ```
 
-Resultado esperado nesta versão: **37 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **38 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
 ```
 
-Esse comando executa cinco testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
+Esse comando executa seis testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
 
 Um teste aprovado significa apenas que aquele cenário produziu o resultado esperado. Não comprova funcionamento da interface, login, permissões do Firestore ou precisão monetária para todos os decimais. Para executar a aplicação completa, siga a configuração abaixo.
 
@@ -135,3 +135,11 @@ As regras do Firestore e seus testes não estão versionados nesta árvore. Port
 
 Projeto em evolução. As funcionalidades descritas devem ser avaliadas junto com as limitações e com o código da versão consultada.
 
+
+## Evolução dos testes: lançamentos de mesmo valor (17/11/2026)
+
+A suíte agora tem 38 testes. O novo cenário em `composicaoSaldo.test.js` preserva dois recebimentos de R$ 100 e dois pagamentos de R$ 30, cada um com um ID diferente. Antes esse caso não era verificado; agora filtros e saldo devem manter os quatro lançamentos e resultar em R$ 140. Não houve mudança no cálculo ou na interface.
+
+Ter o mesmo valor não significa ser a mesma transação. O teste protege contra uma futura deduplicação indevida por tipo e valor; não verifica duplicidade de IDs, importação ou Firestore. Usa somente dados fictícios e inteiros.
+
+Prática: por que eliminar um dos pagamentos de R$ 30 faria o saldo parecer maior que o correto? Implementação e validação por IA, não comprovação de domínio pessoal.

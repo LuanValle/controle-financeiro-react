@@ -60,3 +60,22 @@ test('repetir o mesmo filtro preserva itens, ordem e saldo', () => {
     assert.equal(calcularSaldo(duasVezes), calcularSaldo(umaVez));
   }
 });
+
+test('lançamentos distintos de mesmo valor não desaparecem no filtro ou saldo', () => {
+  const dados = Object.freeze([
+    Object.freeze({ id: 'recebimento-1', tipo: 'entrada', valor: 100 }),
+    Object.freeze({ id: 'recebimento-2', tipo: 'entrada', valor: 100 }),
+    Object.freeze({ id: 'pagamento-1', tipo: 'saida', valor: 30 }),
+    Object.freeze({ id: 'pagamento-2', tipo: 'saida', valor: 30 }),
+  ]);
+  const casos = [
+    ['todos', ['recebimento-1', 'recebimento-2', 'pagamento-1', 'pagamento-2'], 140],
+    ['entrada', ['recebimento-1', 'recebimento-2'], 200],
+    ['saida', ['pagamento-1', 'pagamento-2'], -60],
+  ];
+  for (const [filtro, ids, saldo] of casos) {
+    const resultado = filtrarTransacoes(dados, filtro);
+    assert.deepEqual(resultado.map(item => item.id), ids);
+    assert.equal(calcularSaldo(resultado), saldo);
+  }
+});
