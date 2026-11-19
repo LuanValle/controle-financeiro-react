@@ -78,6 +78,26 @@ Um teste aprovado significa apenas que aquele cenário produziu o resultado espe
 
 Exercício opcional: no arquivo `composicaoSaldo.test.js`, identifique as entradas de 120 e 30 e as saídas de 45 e 15. Antes de executar, explique por que o saldo geral esperado é 90. Material de estudo preparado com IA; não comprova domínio pessoal.
 
+### Reexecutar testes enquanto estuda
+
+Na pasta `treino-react/`, use:
+
+```bash
+npm run test:watch
+```
+
+O modo **watch** observa os arquivos e reexecuta os testes afetados ao salvar uma mudança. Uma reexecução pode mostrar menos testes que a execução inicial, pois não precisa repetir arquivos que não mudaram. Antes era preciso repetir `npm test` manualmente; agora o retorno é contínuo. Ele permanece aberto até você pressionar **Ctrl+C** e não precisa de Firebase nem de dependências extras.
+
+Para trabalhar em um único arquivo:
+
+```bash
+npm run test:watch -- src/utils/calcularSaldo.test.js
+```
+
+O `--` encaminha o caminho ao Node.js. Para uma verificação que termina sozinha, continue usando `npm test`; não use o modo watch como etapa de CI, pois ele fica aguardando novas edições.
+
+Exercício em uma cópia de estudo: altere temporariamente o resultado esperado de um teste de saldo, salve e observe a falha. Restaure o valor correto, salve e observe a aprovação. Encerre com Ctrl+C e confira seu diff antes de publicar. Esse ciclo demonstra feedback de testes; não significa que a funcionalidade original foi desenvolvida com TDD.
+
 ### Executar a aplicação completa
 
 O roteiro abaixo parte de outra pasta nova e usa a branch padrão. Não é necessário para o estudo dos testes acima.
@@ -105,6 +125,7 @@ Os scripts abaixo correspondem à branch deste documento; `test` foi adicionado 
 ```bash
 npm run lint
 npm test
+npm run test:watch
 npm run build
 npm run preview
 ```
