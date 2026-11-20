@@ -51,3 +51,23 @@ for (const [tz, dia, mes, ano] of [
         });
     });
 }
+
+for (const [ano, ultimoDia] of [[2026, 28], [2024, 29]]) {
+    test(`meia-noite de Manaus muda fevereiro para março em ${ano}`, () => {
+        const modulo = new URL('./criarDadosData.js', import.meta.url).href;
+        const instantes = [
+            `${ano}-03-01T03:59:59.999Z`,
+            `${ano}-03-01T04:00:00.000Z`,
+        ];
+        const codigo = `import { criarDadosData } from ${JSON.stringify(modulo)};
+            const instantes = ${JSON.stringify(instantes)};
+            console.log(JSON.stringify(instantes.map(iso => criarDadosData(new Date(iso)))));`;
+        const saida = execFileSync(execPath, ['--input-type=module', '-e', codigo], {
+            env: { ...env, TZ: 'America/Manaus' }, encoding: 'utf8',
+        });
+        assert.deepEqual(JSON.parse(saida), [
+            { data: instantes[0], dia: ultimoDia, mes: 2, ano },
+            { data: instantes[1], dia: 1, mes: 3, ano },
+        ]);
+    });
+}

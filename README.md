@@ -66,7 +66,7 @@ Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e
 
 Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. Estar na `main` ou na pasta errada não significa que os testes falharam: eles ainda não foram executados. Prefira o clone separado acima a trocar uma branch com alterações pendentes.
 
-Resultado esperado nesta versão: **38 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **40 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
@@ -179,3 +179,11 @@ A suíte agora tem 38 testes. O novo cenário em `composicaoSaldo.test.js` prese
 Ter o mesmo valor não significa ser a mesma transação. O teste protege contra uma futura deduplicação indevida por tipo e valor; não verifica duplicidade de IDs, importação ou Firestore. Usa somente dados fictícios e inteiros.
 
 Prática: por que eliminar um dos pagamentos de R$ 30 faria o saldo parecer maior que o correto? Implementação e validação por IA, não comprovação de domínio pessoal.
+
+## Limite exato do calendário local (20/11/2026)
+
+Dois testes novos verificam os instantes imediatamente antes e depois da meia-noite em Manaus na virada de fevereiro para março: 03:59:59.999Z ainda pertence a fevereiro; 04:00:00.000Z já é março. O ano comum termina em 28/02 e o bissexto em 29/02. A suíte totaliza 40 testes.
+
+Antes havia casos de fuso e bissexto separados; agora o limite exato é verificado junto, em processos isolados com `TZ=America/Manaus`. Isso protege o helper de uma troca acidental dos campos locais pelos campos UTC. Não verifica agrupamento de relatórios, gravação no Firestore ou a data escolhida na interface.
+
+Exercício: explique por que dois instantes separados por um milissegundo podem pertencer a meses diferentes. UTC identifica o instante; o calendário local determina o dia naquele lugar. Implementação por IA, não comprovação de domínio pessoal.
