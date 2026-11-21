@@ -66,13 +66,13 @@ Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e
 
 Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. Estar na `main` ou na pasta errada não significa que os testes falharam: eles ainda não foram executados. Prefira o clone separado acima a trocar uma branch com alterações pendentes.
 
-Resultado esperado nesta versão: **40 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **41 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
 ```
 
-Esse comando executa seis testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
+Esse comando executa sete testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
 
 Um teste aprovado significa apenas que aquele cenário produziu o resultado esperado. Não comprova funcionamento da interface, login, permissões do Firestore ou precisão monetária para todos os decimais. Para executar a aplicação completa, siga a configuração abaixo.
 
@@ -187,3 +187,7 @@ Dois testes novos verificam os instantes imediatamente antes e depois da meia-no
 Antes havia casos de fuso e bissexto separados; agora o limite exato é verificado junto, em processos isolados com `TZ=America/Manaus`. Isso protege o helper de uma troca acidental dos campos locais pelos campos UTC. Não verifica agrupamento de relatórios, gravação no Firestore ou a data escolhida na interface.
 
 Exercício: explique por que dois instantes separados por um milissegundo podem pertencer a meses diferentes. UTC identifica o instante; o calendário local determina o dia naquele lugar. Implementação por IA, não comprovação de domínio pessoal.
+
+## Exibição do saldo em centavos (21/11/2026)
+
+Um teste de composição verifica que entradas de R$ 0,10 e R$ 0,20 aparecem como R$ 0,30 e, com uma saída de R$ 0,35, o saldo aparece como -R$ 0,05. O teste verifica o texto em reais; não garante aritmética decimal exata em `Number` nem valida valores digitados no formulário.

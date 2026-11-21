@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { calcularSaldo } from './calcularSaldo.js';
 import { filtrarTransacoes } from './filtrarTransacoes.js';
+import { formatarDinheiro } from './formatarDinheiro.js';
 
 // Dados fictícios, valores inteiros: composição, não precisão monetária.
 test('saldo geral coincide com entradas e saídas filtradas', () => {
@@ -78,4 +79,17 @@ test('lançamentos distintos de mesmo valor não desaparecem no filtro ou saldo'
     assert.deepEqual(resultado.map(item => item.id), ids);
     assert.equal(calcularSaldo(resultado), saldo);
   }
+});
+
+test('saldo com decimais mantém centavos e sinal no formato BRL', () => {
+  const dados = [
+    { tipo: 'entrada', valor: 0.10 },
+    { tipo: 'entrada', valor: 0.20 },
+    { tipo: 'saida', valor: 0.35 },
+  ];
+  const saldoEntradas = calcularSaldo(filtrarTransacoes(dados, 'entrada'));
+  const saldoGeral = calcularSaldo(filtrarTransacoes(dados, 'todos'));
+  // Number aproxima esses decimais; aqui verificamos o texto apresentado.
+  assert.equal(formatarDinheiro(saldoEntradas), 'R$\u00a00,30');
+  assert.equal(formatarDinheiro(saldoGeral), '-R$\u00a00,05');
 });
