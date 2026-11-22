@@ -66,7 +66,7 @@ Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e
 
 Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. Estar na `main` ou na pasta errada não significa que os testes falharam: eles ainda não foram executados. Prefira o clone separado acima a trocar uma branch com alterações pendentes.
 
-Resultado esperado nesta versão: **41 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **42 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
@@ -191,3 +191,7 @@ Exercício: explique por que dois instantes separados por um milissegundo podem 
 ## Exibição do saldo em centavos (21/11/2026)
 
 Um teste de composição verifica que entradas de R$ 0,10 e R$ 0,20 aparecem como R$ 0,30 e, com uma saída de R$ 0,35, o saldo aparece como -R$ 0,05. O teste verifica o texto em reais; não garante aritmética decimal exata em `Number` nem valida valores digitados no formulário.
+
+## Saldo após lançamentos que se compensam (22/11/2026)
+
+Um par de entrada e saída de R$ 75 não apaga um saldo que já existia. O teste usa saldos iniciais fictícios de R$ 125 e −R$ 25 e verifica as duas ordens do par. O saldo do par é zero, mas o saldo final deve continuar igual ao anterior. São valores inteiros; o teste não demonstra precisão monetária para todos os decimais nem valida operações no Firebase.

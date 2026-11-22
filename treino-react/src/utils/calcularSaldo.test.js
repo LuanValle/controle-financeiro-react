@@ -59,3 +59,19 @@ test('cálculo não altera a lista nem os objetos recebidos', () => {
         { id: 'saida-ficticia', tipo: 'saida', valor: 30 },
     ]);
 });
+
+test('lançamentos compensados preservam o saldo anterior positivo ou negativo', () => {
+    const parCompensado = [
+        { tipo: 'entrada', valor: 75 },
+        { tipo: 'saida', valor: 75 },
+    ];
+    const cenarios = [
+        { anteriores: [{ tipo: 'entrada', valor: 125 }], saldo: 125 },
+        { anteriores: [{ tipo: 'saida', valor: 25 }], saldo: -25 },
+    ];
+    for (const { anteriores, saldo } of cenarios) {
+        assert.equal(calcularSaldo(anteriores), saldo);
+        assert.equal(calcularSaldo([...anteriores, ...parCompensado]), saldo);
+        assert.equal(calcularSaldo([...anteriores, ...parCompensado.toReversed()]), saldo);
+    }
+});
