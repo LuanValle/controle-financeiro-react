@@ -93,3 +93,21 @@ test('saldo com decimais mantém centavos e sinal no formato BRL', () => {
   assert.equal(formatarDinheiro(saldoEntradas), 'R$\u00a00,30');
   assert.equal(formatarDinheiro(saldoGeral), '-R$\u00a00,05');
 });
+
+test('uma saída adicional muda apenas os saldos geral e de saídas', () => {
+  const antes = [
+    { tipo: 'entrada', valor: 100 },
+    { tipo: 'saida', valor: 25 },
+  ];
+  const depois = [...antes, { tipo: 'saida', valor: 40 }];
+  const saldoPorFiltro = (lista, filtro) => calcularSaldo(filtrarTransacoes(lista, filtro));
+
+  for (const [filtro, inicial, final] of [
+    ['todos', 75, 35],
+    ['entrada', 100, 100],
+    ['saida', -25, -65],
+  ]) {
+    assert.equal(saldoPorFiltro(antes, filtro), inicial, filtro);
+    assert.equal(saldoPorFiltro(depois, filtro), final, filtro);
+  }
+});

@@ -66,13 +66,13 @@ Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e
 
 Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. Estar na `main` ou na pasta errada não significa que os testes falharam: eles ainda não foram executados. Prefira o clone separado acima a trocar uma branch com alterações pendentes.
 
-Resultado esperado nesta versão: **42 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **43 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
 ```
 
-Esse comando executa sete testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
+Esse comando executa oito testes. Composição é passar o resultado de uma função para outra; aqui, filtrar a lista antes de calcular seu saldo. Os comandos acima foram verificados sem `node_modules` e sem arquivo `.env`. O download inicial do repositório requer acesso ao GitHub.
 
 Um teste aprovado significa apenas que aquele cenário produziu o resultado esperado. Não comprova funcionamento da interface, login, permissões do Firestore ou precisão monetária para todos os decimais. Para executar a aplicação completa, siga a configuração abaixo.
 
@@ -195,3 +195,7 @@ Um teste de composição verifica que entradas de R$ 0,10 e R$ 0,20 aparecem com
 ## Saldo após lançamentos que se compensam (22/11/2026)
 
 Um par de entrada e saída de R$ 75 não apaga um saldo que já existia. O teste usa saldos iniciais fictícios de R$ 125 e −R$ 25 e verifica as duas ordens do par. O saldo do par é zero, mas o saldo final deve continuar igual ao anterior. São valores inteiros; o teste não demonstra precisão monetária para todos os decimais nem valida operações no Firebase.
+
+## Efeito de uma nova saída nos filtros (23/11/2026)
+
+Um teste compara a mesma carteira fictícia antes e depois de uma nova saída de R$ 40. O saldo geral cai de R$ 75 para R$ 35, e o saldo de saídas de −R$ 25 para −R$ 65. O subtotal das entradas continua em R$ 100. A comparação verifica o efeito da mudança nos utilitários, não na interface, em dados reais ou no Firebase.
