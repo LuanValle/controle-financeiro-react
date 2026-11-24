@@ -66,7 +66,7 @@ Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e
 
 Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. Estar na `main` ou na pasta errada não significa que os testes falharam: eles ainda não foram executados. Prefira o clone separado acima a trocar uma branch com alterações pendentes.
 
-Resultado esperado nesta versão: **43 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **44 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
@@ -199,3 +199,7 @@ Um par de entrada e saída de R$ 75 não apaga um saldo que já existia. O teste
 ## Efeito de uma nova saída nos filtros (23/11/2026)
 
 Um teste compara a mesma carteira fictícia antes e depois de uma nova saída de R$ 40. O saldo geral cai de R$ 75 para R$ 35, e o saldo de saídas de −R$ 25 para −R$ 65. O subtotal das entradas continua em R$ 100. A comparação verifica o efeito da mudança nos utilitários, não na interface, em dados reais ou no Firebase.
+
+## Contrato do filtro: listas independentes (24/11/2026)
+
+O contrato descreve o que a função promete devolver a quem a chama. Duas chamadas de `filtrarTransacoes` recebem listas separadas: reordenar ou remover itens de uma delas não afeta a próxima chamada nem a lista de origem. Isso não significa copiar os objetos de cada transação: alterá-los diretamente não faz parte da garantia.

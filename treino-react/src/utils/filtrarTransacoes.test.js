@@ -57,3 +57,19 @@ test('alternar filtros não altera a lista nem os objetos recebidos', () => {
         { id: 'entrada-2', tipo: 'entrada', valor: 50 },
     ]);
 });
+
+test('duas chamadas do mesmo filtro retornam listas independentes', () => {
+    const primeira = filtrarTransacoes(transacoes, 'saida');
+    assert.deepEqual(primeira.map(({ id }) => id), ['saida-1', 'saida-2']);
+    primeira.reverse();
+    primeira.pop();
+
+    const segunda = filtrarTransacoes(transacoes, 'saida');
+
+    assert.deepEqual(primeira.map(({ id }) => id), ['saida-2']);
+    assert.notEqual(primeira, segunda);
+    assert.deepEqual(segunda.map(({ id }) => id), ['saida-1', 'saida-2']);
+    assert.deepEqual(transacoes.map(({ id }) => id), [
+        'saida-1', 'entrada-1', 'saida-2', 'entrada-2',
+    ]);
+});
