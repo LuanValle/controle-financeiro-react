@@ -52,19 +52,19 @@ O aplicativo está na pasta `treino-react/`.
 
 Para estudar somente as funções de cálculo, filtro, data e formatação, você não precisa criar conta, preencher `.env` ou instalar as dependências da interface. Use Git, npm e Node.js 24.
 
-**Enquanto o [PR #4](https://github.com/LuanValle/controle-financeiro-react/pull/4) estiver aguardando integração, os testes estão na branch `test/2026-11-11-balance-filters`, não na `main`.** Um clone comum seleciona a branch padrão e, nesse estado, não oferece `npm test`.
+**Os testes já estão na `main`.** Não é preciso trocar para a branch antiga do [PR #4](https://github.com/LuanValle/controle-financeiro-react/pull/4).
 
 Para começar em uma pasta nova, sem alterar uma cópia de trabalho existente:
 
 ```bash
-git clone --branch test/2026-11-11-balance-filters --single-branch https://github.com/LuanValle/controle-financeiro-react.git controle-financeiro-estudo
+git clone --branch main --single-branch https://github.com/LuanValle/controle-financeiro-react.git controle-financeiro-estudo
 cd controle-financeiro-estudo/treino-react
 npm test
 ```
 
-Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e ajuste o `cd`; não apague seu trabalho. Se já estiver na raiz da cópia desta branch, basta executar `cd treino-react` e `npm test`.
+Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e ajuste o `cd`; não apague seu trabalho. Se já estiver na raiz de uma cópia atualizada da `main`, basta executar `cd treino-react` e `npm test`.
 
-Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. Estar na `main` ou na pasta errada não significa que os testes falharam: eles ainda não foram executados. Prefira o clone separado acima a trocar uma branch com alterações pendentes.
+Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. O erro indica que a suíte ainda não foi executada. Verifique se você está na pasta `treino-react/` de uma cópia atualizada da `main`. Se o script não aparecer mesmo na pasta certa, use o clone separado acima para não tocar em alterações pendentes.
 
 Resultado esperado nesta versão: **44 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
@@ -120,7 +120,7 @@ npm run dev
 
 ### Scripts disponíveis
 
-Os scripts abaixo correspondem à branch deste documento; `test` foi adicionado no PR #4 e ainda depende de sua integração para aparecer na `main`.
+Na pasta `treino-react/`, a `main` já inclui os scripts abaixo.
 
 ```bash
 npm run lint
