@@ -64,7 +64,10 @@ npm test
 
 Se a pasta `controle-financeiro-estudo` já existir, use outro nome de destino e ajuste o `cd`; não apague seu trabalho. Se já estiver na raiz de uma cópia atualizada da `main`, basta executar `cd treino-react` e `npm test`.
 
-Se aparecer `Missing script: "test"`, confira `git branch --show-current` e `npm run`. O primeiro mostra a branch; o segundo lista os scripts do `package.json` na pasta atual. O erro indica que a suíte ainda não foi executada. Verifique se você está na pasta `treino-react/` de uma cópia atualizada da `main`. Se o script não aparecer mesmo na pasta certa, use o clone separado acima para não tocar em alterações pendentes.
+Se o npm der erro antes de iniciar os testes, compare a mensagem:
+
+- **`ENOENT` mencionando `package.json`:** o npm não achou o arquivo. Se você está na raiz `controle-financeiro-estudo/`, rode `cd treino-react` e tente `npm test` de novo.
+- **`Missing script: "test"`:** o npm encontrou um `package.json`, mas ele não define `test`. Na pasta `treino-react/`, use `npm run` para listar os scripts e `git branch --show-current` para confirmar a branch. Se estiver na pasta certa da `main` e o script não aparecer, use o clone separado acima para preservar alterações pendentes.
 
 Resultado esperado nesta versão: **44 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
