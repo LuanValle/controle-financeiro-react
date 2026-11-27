@@ -71,3 +71,18 @@ for (const [ano, ultimoDia] of [[2026, 28], [2024, 29]]) {
         ]);
     });
 }
+
+test('fuso UTC+05:30 passa para o ano novo sem alterar o instante UTC', () => {
+    const modulo = new URL('./criarDadosData.js', import.meta.url).href;
+    const instantes = ['2026-12-31T18:29:59.999Z', '2026-12-31T18:30:00.000Z'];
+    const codigo = `import { criarDadosData } from ${JSON.stringify(modulo)};
+        const instantes = ${JSON.stringify(instantes)};
+        console.log(JSON.stringify(instantes.map(iso => criarDadosData(new Date(iso)))));`;
+    const saida = execFileSync(execPath, ['--input-type=module', '-e', codigo], {
+        env: { ...env, TZ: 'Asia/Kolkata' }, encoding: 'utf8',
+    });
+    assert.deepEqual(JSON.parse(saida), [
+        { data: instantes[0], dia: 31, mes: 12, ano: 2026 },
+        { data: instantes[1], dia: 1, mes: 1, ano: 2027 },
+    ]);
+});

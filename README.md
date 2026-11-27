@@ -69,7 +69,7 @@ Se o npm der erro antes de iniciar os testes, compare a mensagem:
 - **`ENOENT` mencionando `package.json`:** o npm não achou o arquivo. Se você está na raiz `controle-financeiro-estudo/`, rode `cd treino-react` e tente `npm test` de novo.
 - **`Missing script: "test"`:** o npm encontrou um `package.json`, mas ele não define `test`. Na pasta `treino-react/`, use `npm run` para listar os scripts e `git branch --show-current` para confirmar a branch. Se estiver na pasta certa da `main` e o script não aparecer, use o clone separado acima para preservar alterações pendentes.
 
-Resultado esperado nesta versão: **44 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
+Resultado esperado nesta versão: **45 testes aprovados**. Para investigar apenas a composição de filtros e saldo:
 
 ```bash
 node --test src/utils/composicaoSaldo.test.js
